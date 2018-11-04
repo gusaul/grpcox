@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>gRPCox - gRPC Testing Environment</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/mdb.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container pt-50">
+    <div class="row animated fadeIn">
+      <div class="col">
+        <div class="md-form input-group">
+          <input type="text" class="form-control" id="server-target">
+          <label for="server-target">gRPC Server Target</label>
+          <div class="input-group-append">
+            <button id="get-services" class="btn btn-mdb-color waves-effect m-0" type="button"><i class="fa fa-plug"></i></button>
+          </div>
+        </div>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="use-tls">
+          <label class="custom-control-label" for="use-tls">Use TLS</label>
+        </div>
+
+        <div class="other-elem" id="choose-service" style="display: none">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text btn-dark" for="select-service"><i class="fa fa-television"></i>&nbsp;&nbsp;Services</span>
+            </div>
+            <select class="browser-default custom-select" id="select-service"></select>
+          </div>
+        </div>
+
+        <div class="other-elem" id="choose-function" style="display: none">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text btn-dark" for="select-function"><i class="fa fa-rocket"></i>&nbsp;&nbsp;Methods</span>
+            </div>
+            <select class="browser-default custom-select" id="select-function"></select>
+          </div>
+        </div>
+
+        <div class="row other-elem" id="body-request" style="display: none">
+          <div class="col-md-7">
+            <div class="card">
+              <div class="card-body schema-body">
+                <pre id="editor"></pre>
+              </div>
+            </div>
+            <button class="btn btn-primary waves-effect mt-10" id="invoke-func" type="button"><i class="fa fa-play"></i>&nbsp;&nbsp;Submit</button>
+          </div>
+          <div class="col-md-5">
+            <div class="card">
+              <div class="card-body schema-body">
+                <h4 class="card-title"><a>Schema Input</a></h4>
+                <pre class="prettyprint custom-pretty" id="schema-proto"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row other-elem" id="response" style="display: none">
+          <div class="col">
+            <div class="card">
+              <div class="card-body">
+                <small class="pull-right" id="timer-resp">Time : <span></span></small>
+                <h4 class="card-title"><a>Response:</a></h4>
+                <p class="card-text">
+                  <pre class="prettyprint custom-pretty" id="json-response"></pre>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a target="_blank" href="https://github.com/gusaul" class="github-corner" aria-label="View source on GitHub">
+    <svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;"
+      aria-hidden="true">
+      <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+      <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+        fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+      <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+        fill="currentColor" class="octo-body"></path>
+    </svg>
+  </a>
+
+  <div class="loading-overlay" style="display: none">
+    <div><svg width="200px" height="200px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"
+        class="lds-flat-ball" style="background: none;">
+        <defs>
+          <mask ng-attr-id="{{config.mid}}" id="lds-flat-ball-mask-e49120e4825">
+            <circle cx="50" cy="50" r="45" fill="#fff"></circle>
+          </mask>
+        </defs>
+        <circle cx="50" cy="50" r="45" ng-attr-fill="{{config.base}}" fill="#85a2b6"></circle>
+        <path ng-attr-fill="{{config.dark}}" mask="url(#lds-flat-ball-mask-e49120e4825)" fill="rgb(107, 131, 147)" d="M 37.2721 55.3778 L 62.7279 29.922 L 162.728 129.922 L 137.272 155.378 Z">
+          <animate attributeName="d" calcMode="spline" values="M 37.27207793864214 40.72792206135786 L 62.72792206135786 15.272077938642143 L 162.72792206135784 115.27207793864214 L 137.27207793864216 140.72792206135784 Z;M 37.27207793864214 84.72792206135786 L 62.72792206135786 59.27207793864214 L 162.72792206135784 159.27207793864216 L 137.27207793864216 184.72792206135784 Z;M 37.27207793864214 40.72792206135786 L 62.72792206135786 15.272077938642143 L 162.72792206135784 115.27207793864214 L 137.27207793864216 140.72792206135784 Z"
+            keyTimes="0;0.5;1" dur="1" keySplines="0.45 0 0.9 0.55;0 0.45 0.55 0.9" begin="0s" repeatCount="indefinite"></animate>
+        </path>
+        <circle cx="50" ng-attr-cy="{{config.cy}}" ng-attr-r="{{config.radius}}" ng-attr-fill="{{config.color}}" cy="42.6499"
+          r="18" fill="#fdfdfd">
+          <animate attributeName="cy" calcMode="spline" values="28;72;28" keyTimes="0;0.5;1" dur="1" keySplines="0.45 0 0.9 0.55;0 0.45 0.55 0.9"
+            begin="0s" repeatCount="indefinite"></animate>
+        </circle>
+      </svg></div>
+  </div>
+
+  <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/mdb.min.js"></script>
+  <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
+  <script type="text/javascript" src="js/style.js"></script>
+</body>
+
+</html>

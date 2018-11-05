@@ -58,7 +58,7 @@ $('#select-service').change(function(){
                 alert(res.error);
                 return;
             }
-            $("#select-function").html(new Option("Choose Methods", ""));
+            $("#select-function").html(new Option("Choose Method", ""));
             $.each(res.data, (_, item) => $("#select-function").append(new Option(item.substr(selected.length) , item)));
             $('#choose-function').show();
         },

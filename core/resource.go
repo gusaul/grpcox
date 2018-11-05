@@ -146,8 +146,7 @@ func (r *Resource) Invoke(ctx context.Context, symbol string, in io.Reader) (str
 	}
 
 	if h.Status.Code() != codes.OK {
-		log.Printf("ERROR:\n  Code: %s\n  Message: %s\n", h.Status.Code().String(), h.Status.Message())
-		r.exit(1)
+		return "", end, fmt.Errorf(h.Status.Message())
 	}
 
 	// copy the output in a separate goroutine so printing can't block indefinitely

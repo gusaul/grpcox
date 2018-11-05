@@ -7,6 +7,9 @@ body {
 .pt-50 {
     padding-top:50px;
 }
+.w-120 {
+    width: 120px;
+}
 .custom-pretty {
     border:none!important;
 }

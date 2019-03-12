@@ -16,18 +16,6 @@ body {
 .custom-control-label:hover {
     cursor: pointer;
 }
-.loading-overlay {
-    position: absolute;
-    top:0;
-    display: grid;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,.5);
-    z-index: 99;
-}
-.loading-overlay div {
-    margin:auto;
-}
 #choose-service, #choose-function, #body-request {
     margin-top: 40px;
 }
@@ -62,5 +50,59 @@ body {
 
     .github-corner .octo-arm{
         animation:octocat-wave 560ms ease-in-out
+    }
+}
+
+/* loading spinner */
+.spinner {
+    margin: 10px auto;
+    width: 180px;
+    height: 80px;
+    text-align: center;
+    font-size: 80px;
+}
+
+.spinner > div {
+    background-color: #59698d;
+    height: 100%;
+    width: 18px;
+    display: inline-block;
+
+    -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+    animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner .rect2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+}
+
+.spinner .rect3 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+}
+
+.spinner .rect4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+}
+
+.spinner .rect5 {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+}
+
+@-webkit-keyframes sk-stretchdelay {
+    0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
+    20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes sk-stretchdelay {
+    0%, 40%, 100% {
+        transform: scaleY(0.4);
+        -webkit-transform: scaleY(0.4);
+    }  20% {
+        transform: scaleY(1.0);
+        -webkit-transform: scaleY(1.0);
     }
 }

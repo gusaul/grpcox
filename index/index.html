@@ -92,25 +92,12 @@
     </svg>
   </a>
 
-  <div class="loading-overlay" style="display: none">
-    <div><svg width="200px" height="200px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"
-        class="lds-flat-ball" style="background: none;">
-        <defs>
-          <mask ng-attr-id="{{config.mid}}" id="lds-flat-ball-mask-e49120e4825">
-            <circle cx="50" cy="50" r="45" fill="#fff"></circle>
-          </mask>
-        </defs>
-        <circle cx="50" cy="50" r="45" ng-attr-fill="{{config.base}}" fill="#85a2b6"></circle>
-        <path ng-attr-fill="{{config.dark}}" mask="url(#lds-flat-ball-mask-e49120e4825)" fill="rgb(107, 131, 147)" d="M 37.2721 55.3778 L 62.7279 29.922 L 162.728 129.922 L 137.272 155.378 Z">
-          <animate attributeName="d" calcMode="spline" values="M 37.27207793864214 40.72792206135786 L 62.72792206135786 15.272077938642143 L 162.72792206135784 115.27207793864214 L 137.27207793864216 140.72792206135784 Z;M 37.27207793864214 84.72792206135786 L 62.72792206135786 59.27207793864214 L 162.72792206135784 159.27207793864216 L 137.27207793864216 184.72792206135784 Z;M 37.27207793864214 40.72792206135786 L 62.72792206135786 15.272077938642143 L 162.72792206135784 115.27207793864214 L 137.27207793864216 140.72792206135784 Z"
-            keyTimes="0;0.5;1" dur="1" keySplines="0.45 0 0.9 0.55;0 0.45 0.55 0.9" begin="0s" repeatCount="indefinite"></animate>
-        </path>
-        <circle cx="50" ng-attr-cy="{{config.cy}}" ng-attr-r="{{config.radius}}" ng-attr-fill="{{config.color}}" cy="42.6499"
-          r="18" fill="#fdfdfd">
-          <animate attributeName="cy" calcMode="spline" values="28;72;28" keyTimes="0;0.5;1" dur="1" keySplines="0.45 0 0.9 0.55;0 0.45 0.55 0.9"
-            begin="0s" repeatCount="indefinite"></animate>
-        </circle>
-      </svg></div>
+  <div class="spinner" style="display: none">
+    <div class="rect1"></div>
+    <div class="rect2"></div>
+    <div class="rect3"></div>
+    <div class="rect4"></div>
+    <div class="rect5"></div>
   </div>
 
   <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>

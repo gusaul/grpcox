@@ -32,11 +32,14 @@ $('#get-services').click(function(){
             alert(errorThrown);
         },
         beforeSend: function(xhr){
+            $('#choose-service').hide();
             xhr.setRequestHeader('use_tls', use_tls);
             $(this).html("Loading...");
+            show_loading();
         },
         complete: function(){
             $(this).html(button);
+            hide_loading();
         }
     });
 });
@@ -64,6 +67,7 @@ $('#select-service').change(function(){
         },
         error: err,
         beforeSend: function(xhr){
+            $('#choose-function').hide();
             xhr.setRequestHeader('use_tls', use_tls);
             show_loading();
         },
@@ -96,6 +100,7 @@ $('#select-function').change(function(){
         },
         error: err,
         beforeSend: function(xhr){
+            $('#body-request').hide();
             xhr.setRequestHeader('use_tls', use_tls);
             show_loading();
         },
@@ -129,11 +134,14 @@ $('#invoke-func').click(function(){
         },
         error: err,
         beforeSend: function(xhr){
+            $('#response').hide();
             xhr.setRequestHeader('use_tls', use_tls);
             $(this).html("Loading...");
+            show_loading();
         },
         complete: function(){
             $(this).html(button);
+            hide_loading();
         }
     });
 });
@@ -173,9 +181,9 @@ function err(_, _, errorThrown) {
 }
 
 function show_loading() {
-    $('.loading-overlay').show();
+    $('.spinner').show();
 }
 
 function hide_loading() {
-    $('.loading-overlay').hide();
+    $('.spinner').hide();
 }

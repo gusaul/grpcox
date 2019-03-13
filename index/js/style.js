@@ -4,15 +4,20 @@ $('#get-services').click(function(){
     var t = get_valid_target();
     if (target != t) {
         target = t;
-        use_tls = $('#use-tls').is(":checked");
+        use_tls = "false";
     } else {
         return false;
+    }
+
+    var restart = "0"
+    if($('#restart-conn').is(":checked")) {
+        restart = "1"
     }
     
     $('.other-elem').hide();
     var button = $(this).html();
     $.ajax({
-        url: "server/"+target+"/services",
+        url: "server/"+target+"/services?restart="+restart,
         global: true,
         method: "GET",
         success: function(res){
@@ -38,6 +43,7 @@ $('#get-services').click(function(){
             show_loading();
         },
         complete: function(){
+            applyConnCount();
             $(this).html(button);
             hide_loading();
         }
@@ -187,3 +193,55 @@ function show_loading() {
 function hide_loading() {
     $('.spinner').hide();
 }
+
+$(".connections ul").on("click", "i", function(){
+    $parent = $(this).parent("li");
+    var ip = $(this).siblings("span").text();
+
+    $.ajax({
+        url: "/active/close/" + ip,
+        global: true,
+        method: "DELETE",
+        success: function(res){
+            if(res.data.success) {
+                $parent.remove();
+                updateCountNum();
+            }
+        },
+        error: err,
+        beforeSend: function(xhr){
+            $(this).attr("class", "fa fa-spinner");
+        },
+    });
+});
+
+function updateCountNum() {
+    $(".connections .title span").html($(".connections ul li").length);
+}
+
+function applyConnCount() {
+    $.ajax({
+        url: "active/get",
+        global: true,
+        method: "GET",
+        success: function(res){
+            $(".connections .title span").html(res.data.length);
+            $(".connections .nav").html("");
+            res.data.forEach(function(item){
+                $list = $("#conn-list-template").clone();
+                $list.find(".ip").html(item);
+                $(".connections .nav").append($list.html());
+            });
+        },
+        error: err,
+    });
+}
+
+function refreshConnCount() {
+    applyConnCount();
+    setTimeout(refreshConnCount, 5000);
+}
+
+$(document).ready(function(){
+    refreshConnCount();
+});

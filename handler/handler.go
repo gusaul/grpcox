@@ -6,12 +6,25 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/gusaul/grpcox/core"
 )
 
-func index(w http.ResponseWriter, r *http.Request) {
+// Handler hold all handler methods
+type Handler struct {
+	g *core.GrpCox
+}
+
+// InitHandler Constructor
+func InitHandler() *Handler {
+	return &Handler{
+		g: core.InitGrpCox(),
+	}
+}
+
+func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	body := new(bytes.Buffer)
 	err := indexHTML.Execute(body, make(map[string]string))
 	if err != nil {
@@ -23,7 +36,27 @@ func index(w http.ResponseWriter, r *http.Request) {
 	w.Write(body.Bytes())
 }
 
-func getLists(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getActiveConns(w http.ResponseWriter, r *http.Request) {
+	response(w, h.g.GetActiveConns(context.TODO()))
+}
+
+func (h *Handler) closeActiveConns(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	host := vars["host"]
+	if host == "" {
+		writeError(w, fmt.Errorf("Invalid Host"))
+		return
+	}
+
+	err := h.g.CloseActiveConns(strings.Trim(host, " "))
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+	response(w, map[string]bool{"success": true})
+}
+
+func (h *Handler) getLists(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	host := vars["host"]
 	if host == "" {
@@ -33,16 +66,14 @@ func getLists(w http.ResponseWriter, r *http.Request) {
 
 	service := vars["serv_name"]
 
-	g := new(core.GrpCox)
 	useTLS, _ := strconv.ParseBool(r.Header.Get("use_tls"))
-	g.PlainText = !useTLS
+	restart, _ := strconv.ParseBool(r.FormValue("restart"))
 
-	res, err := g.GetResource(context.Background(), host)
+	res, err := h.g.GetResource(context.Background(), host, !useTLS, restart)
 	if err != nil {
 		writeError(w, err)
 		return
 	}
-	defer res.Close()
 
 	result, err := res.List(service)
 	if err != nil {
@@ -53,7 +84,7 @@ func getLists(w http.ResponseWriter, r *http.Request) {
 	response(w, result)
 }
 
-func describeFunction(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) describeFunction(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	host := vars["host"]
 	if host == "" {
@@ -67,16 +98,13 @@ func describeFunction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	g := new(core.GrpCox)
 	useTLS, _ := strconv.ParseBool(r.Header.Get("use_tls"))
-	g.PlainText = !useTLS
 
-	res, err := g.GetResource(context.Background(), host)
+	res, err := h.g.GetResource(context.Background(), host, !useTLS, false)
 	if err != nil {
 		writeError(w, err)
 		return
 	}
-	defer res.Close()
 
 	// get param
 	result, _, err := res.Describe(funcName)
@@ -109,7 +137,7 @@ func describeFunction(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func invokeFunction(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) invokeFunction(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	host := vars["host"]
 	if host == "" {
@@ -123,16 +151,13 @@ func invokeFunction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	g := new(core.GrpCox)
 	useTLS, _ := strconv.ParseBool(r.Header.Get("use_tls"))
-	g.PlainText = !useTLS
 
-	res, err := g.GetResource(context.Background(), host)
+	res, err := h.g.GetResource(context.Background(), host, !useTLS, false)
 	if err != nil {
 		writeError(w, err)
 		return
 	}
-	defer res.Close()
 
 	// get param
 	result, timer, err := res.Invoke(context.Background(), funcName, r.Body)

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>gRPCox - gRPC Testing Environment</title>
+  <link rel="icon" href="/img/favicon.png" type="image/x-icon" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/mdb.min.css" rel="stylesheet">
@@ -23,8 +24,8 @@
           </div>
         </div>
         <div class="custom-control custom-checkbox">
-          <input type="checkbox" class="custom-control-input" id="use-tls">
-          <label class="custom-control-label" for="use-tls">Use TLS</label>
+          <input type="checkbox" class="custom-control-input" id="restart-conn">
+          <label class="custom-control-label" for="restart-conn">Restart Connection</label>
         </div>
 
         <div class="other-elem" id="choose-service" style="display: none">
@@ -91,6 +92,16 @@
         fill="currentColor" class="octo-body"></path>
     </svg>
   </a>
+
+  <div class="connections">
+      <div class="title">
+              <svg class="dots" expanded = "true" height = "100px" width = "100px"><circle cx = "50%" cy = "50%" r = "7px"></circle><circle class = "pulse" cx = "50%" cy = "50%" r = "10px"></circle></svg>
+              <span></span> Active Connection(s)
+      </div>
+      <div id="conn-list-template" style="display:none"><li><i class="fa fa-close"></i> <span class="ip"></span></li></div>
+      <ul class="nav">
+      </ul>
+  </div>
 
   <div class="spinner" style="display: none">
     <div class="rect1"></div>

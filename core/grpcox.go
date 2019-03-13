@@ -16,7 +16,8 @@ import (
 // GrpCox - main object
 type GrpCox struct {
 	KeepAlive float64
-	PlainText bool
+
+	activeConn map[string]*Resource
 
 	// TODO : utilize below args
 	headers        []string
@@ -30,14 +31,28 @@ type GrpCox struct {
 	isUnixSocket   func() bool
 }
 
+// InitGrpCox constructor
+func InitGrpCox() *GrpCox {
+	return &GrpCox{
+		activeConn: make(map[string]*Resource),
+	}
+}
+
 // GetResource - open resource to targeted grpc server
-func (g *GrpCox) GetResource(ctx context.Context, target string) (*Resource, error) {
+func (g *GrpCox) GetResource(ctx context.Context, target string, plainText, isRestartConn bool) (*Resource, error) {
+	if conn, ok := g.activeConn[target]; ok {
+		if !isRestartConn && conn.refClient != nil && conn.clientConn != nil {
+			return conn, nil
+		}
+		g.CloseActiveConns(target)
+	}
+
 	var err error
 	r := new(Resource)
 	h := append(g.headers, g.reflectHeaders...)
 	md := grpcurl.MetadataFromHeaders(h)
 	refCtx := metadata.NewOutgoingContext(ctx, md)
-	r.clientConn, err = g.dial(ctx, target)
+	r.clientConn, err = g.dial(ctx, target, plainText)
 	if err != nil {
 		return nil, err
 	}
@@ -46,10 +61,40 @@ func (g *GrpCox) GetResource(ctx context.Context, target string) (*Resource, err
 	r.descSource = grpcurl.DescriptorSourceFromServer(ctx, r.refClient)
 	r.headers = h
 
+	g.activeConn[target] = r
 	return r, nil
 }
 
-func (g *GrpCox) dial(ctx context.Context, target string) (*grpc.ClientConn, error) {
+// GetActiveConns - get all saved active connection
+func (g *GrpCox) GetActiveConns(ctx context.Context) []string {
+	result := make([]string, len(g.activeConn))
+	i := 0
+	for k := range g.activeConn {
+		result[i] = k
+		i++
+	}
+	return result
+}
+
+// CloseActiveConns - close conn by host or all
+func (g *GrpCox) CloseActiveConns(host string) error {
+	if host == "all" {
+		for k, v := range g.activeConn {
+			v.Close()
+			delete(g.activeConn, k)
+		}
+		return nil
+	}
+
+	if v, ok := g.activeConn[host]; ok {
+		v.Close()
+		delete(g.activeConn, host)
+	}
+
+	return nil
+}
+
+func (g *GrpCox) dial(ctx context.Context, target string, plainText bool) (*grpc.ClientConn, error) {
 	dialTime := 10 * time.Second
 	ctx, cancel := context.WithTimeout(ctx, dialTime)
 	defer cancel()
@@ -69,7 +114,7 @@ func (g *GrpCox) dial(ctx context.Context, target string) (*grpc.ClientConn, err
 	}
 
 	var creds credentials.TransportCredentials
-	if !g.PlainText {
+	if !plainText {
 		var err error
 		creds, err = grpcurl.ClientTransportCredentials(g.insecure, g.cacert, g.cert, g.key)
 		if err != nil {

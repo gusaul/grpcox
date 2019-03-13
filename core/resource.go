@@ -119,7 +119,7 @@ func (r *Resource) Describe(symbol string) (string, string, error) {
 
 // Invoke - invoking gRPC function
 func (r *Resource) Invoke(ctx context.Context, symbol string, in io.Reader) (string, time.Duration, error) {
-	// because of grpcurl directlu fmt.Printf on their invoke function
+	// because of grpcurl directly fmt.Printf on their invoke function
 	// so we stub the Stdout using os.Pipe
 	backUpStdout := os.Stdout
 	defer func() {

@@ -53,6 +53,101 @@ body {
     }
 }
 
+/* connections */
+.connections {
+    font-weight: 100;
+    background: #efefef;
+    width: 240px;
+    height: 320px;
+    position: fixed;
+    top: 200px;
+    z-index: 100;
+    -webkit-box-shadow: -3px 0px 5px 0px rgba(0,0,0,0.2);
+    box-shadow: -3px 0px 5px 0px rgba(0,0,0,0.2);
+    left: -190px;
+    transition: all .3s;
+    -webkit-transition: all .3s;
+    color: #222;
+}
+
+.connections:hover, .connections:focus {
+    transform: translate3d(190px, 0, 0);
+    animation-timing-function: 1s ease-in
+}
+
+.connections .title {
+    top: 50%;
+    position: absolute;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    transform: rotate(270deg);
+    right: -50px;
+    font-weight: 800;
+    font-size: 15px
+}
+
+.connections .nav {
+    position: absolute;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    font-weight: 100;
+    overflow-y: scroll;
+    padding-left: 10px;
+    padding-right: 30px;
+    top: 160px;
+    height: 300px;
+}
+
+.connections .nav li {
+    padding-bottom: 12px;
+    list-style-type: none
+}
+
+.connections .nav li i {
+    color: #a20000;
+    cursor: pointer;
+}
+
+.connections .nav li a:hover { color: #aaa }
+
+.dots {
+    position: absolute;
+    left: -65px;
+    top: -39px;
+    color: #b70000;
+}
+
+circle {
+    stroke: #ce2828;
+    fill: #a20000;
+    stroke-width: 2px;
+    stroke-opacity: 1;
+}
+
+.pulse {
+    fill: white;
+    fill-opacity: 0;
+    transform-origin: 50% 50%;
+    animation-duration: 2s;
+    animation-name: pulse;
+    animation-iteration-count: infinite;
+}
+
+@keyframes pulse {
+    from {
+        stroke-width: 3px;
+        stroke-opacity: 1;
+        transform: scale(0.3);
+    }
+    to {
+        stroke-width: 0;
+        stroke-opacity: 0;
+        transform: scale(2);
+    }
+}
+
 /* loading spinner */
 .spinner {
     margin: 10px auto;

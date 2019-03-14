@@ -232,6 +232,7 @@ function applyConnCount() {
                 $list.find(".ip").html(item);
                 $(".connections .nav").append($list.html());
             });
+            refreshToolTip();
         },
         error: err,
     });
@@ -240,6 +241,12 @@ function applyConnCount() {
 function refreshConnCount() {
     applyConnCount();
     setTimeout(refreshConnCount, 5000);
+}
+
+function refreshToolTip() {
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 }
 
 $(document).ready(function(){

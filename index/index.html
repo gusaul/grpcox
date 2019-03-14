@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>gRPCox - gRPC Testing Environment</title>
-  <link rel="icon" href="/img/favicon.png" type="image/x-icon" />
+  <link rel="icon" href="img/favicon.png" type="image/x-icon" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/mdb.min.css" rel="stylesheet">
@@ -98,7 +98,7 @@
               <svg class="dots" expanded = "true" height = "100px" width = "100px"><circle cx = "50%" cy = "50%" r = "7px"></circle><circle class = "pulse" cx = "50%" cy = "50%" r = "10px"></circle></svg>
               <span></span> Active Connection(s)
       </div>
-      <div id="conn-list-template" style="display:none"><li><i class="fa fa-close"></i> <span class="ip"></span></li></div>
+      <div id="conn-list-template" style="display:none"><li><i class="fa fa-close" data-toggle="tooltip" title="close connection"></i> <span class="ip"></span></li></div>
       <ul class="nav">
       </ul>
   </div>
@@ -112,6 +112,7 @@
   </div>
 
   <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" src="js/popper.min.js"></script>
   <script type="text/javascript" src="js/bootstrap.min.js"></script>
   <script type="text/javascript" src="js/mdb.min.js"></script>
   <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>

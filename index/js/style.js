@@ -235,7 +235,9 @@ function applyConnCount() {
             });
             refreshToolTip();
         },
-        error: err,
+        error: function (_, _, thrownError) {
+            console.warn("Failed to update active connections", thrownError)
+        },
     });
 }
 

@@ -2,18 +2,19 @@ var target, use_tls, editor;
 
 $('#get-services').click(function(){
     var t = get_valid_target();
-    if (target != t) {
-        target = t;
-        use_tls = "false";
-    } else {
-        return false;
-    }
 
+    use_tls = "false";
     var restart = "0"
     if($('#restart-conn').is(":checked")) {
         restart = "1"
     }
-    
+
+    if (target != t || restart == "1") {
+        target = t;
+    } else {
+        return false;
+    }
+
     $('.other-elem').hide();
     var button = $(this).html();
     $.ajax({

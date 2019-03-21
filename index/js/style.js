@@ -200,7 +200,7 @@ $(".connections ul").on("click", "i", function(){
     var ip = $(this).siblings("span").text();
 
     $.ajax({
-        url: "/active/close/" + ip,
+        url: "active/close/" + ip,
         global: true,
         method: "DELETE",
         success: function(res){

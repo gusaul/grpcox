@@ -16,7 +16,7 @@ func main() {
 	handler.Init(muxRouter)
 	srv := &http.Server{
 		Handler:      muxRouter,
-		Addr:         "127.0.0.1" + port,
+		Addr:         "0.0.0.0" + port,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}

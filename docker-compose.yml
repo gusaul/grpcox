@@ -1,0 +1,8 @@
+version: '3'
+services:
+  grpcox:
+    build: .
+    ports:
+      - "6969:6969"
+    volumes:
+      - ./index:/index

@@ -221,6 +221,8 @@ function updateCountNum() {
 }
 
 function applyConnCount() {
+    $('[data-toggle="tooltip"]').tooltip('hide');
+
     $.ajax({
         url: "active/get",
         global: true,
@@ -243,7 +245,7 @@ function applyConnCount() {
 
 function refreshConnCount() {
     applyConnCount();
-    setTimeout(refreshConnCount, 5000);
+    setTimeout(refreshConnCount, 10000);
 }
 
 function refreshToolTip() {

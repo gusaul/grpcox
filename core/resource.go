@@ -165,13 +165,24 @@ func (r *Resource) Invoke(ctx context.Context, symbol string, in io.Reader) (str
 
 // Close - to close all resources that was opened before
 func (r *Resource) Close() {
-	if r.refClient != nil {
-		r.refClient.Reset()
-		r.refClient = nil
-	}
-	if r.clientConn != nil {
-		r.clientConn.Close()
-		r.clientConn = nil
+	done := make(chan int)
+	go func() {
+		if r.refClient != nil {
+			r.refClient.Reset()
+			r.refClient = nil
+		}
+		if r.clientConn != nil {
+			r.clientConn.Close()
+			r.clientConn = nil
+		}
+		done <- 1
+	}()
+
+	select {
+	case <-done:
+		return
+	case <-time.After(3 * time.Second):
+		return
 	}
 }
 

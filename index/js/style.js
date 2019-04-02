@@ -248,7 +248,8 @@ function refreshConnCount() {
 
 function refreshToolTip() {
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-toggle="tooltip"]').tooltip('dispose');
+        $('[data-toggle="tooltip"]').tooltip();
     })
 }
 

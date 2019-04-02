@@ -208,6 +208,7 @@ $(".connections ul").on("click", "i", function(){
                 $parent.remove();
                 updateCountNum();
             }
+            $('[data-toggle="tooltip"]').tooltip('hide');
         },
         error: err,
         beforeSend: function(xhr){

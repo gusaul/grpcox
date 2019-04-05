@@ -2,6 +2,8 @@ package core
 
 import (
 	"context"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/fullstorydev/grpcurl"
@@ -17,7 +19,8 @@ import (
 type GrpCox struct {
 	KeepAlive float64
 
-	activeConn map[string]*Resource
+	activeConn  *ConnStore
+	maxLifeConn time.Duration
 
 	// TODO : utilize below args
 	headers        []string
@@ -33,15 +36,33 @@ type GrpCox struct {
 
 // InitGrpCox constructor
 func InitGrpCox() *GrpCox {
-	return &GrpCox{
-		activeConn: make(map[string]*Resource),
+	maxLife, tick := 10, 3
+
+	if val, err := strconv.Atoi(os.Getenv("MAX_LIFE_CONN")); err == nil {
+		maxLife = val
 	}
+
+	if val, err := strconv.Atoi(os.Getenv("TICK_CLOSE_CONN")); err == nil {
+		tick = val
+	}
+
+	c := NewConnectionStore()
+	g := &GrpCox{
+		activeConn: c,
+	}
+
+	if maxLife > 0 && tick > 0 {
+		g.maxLifeConn = time.Duration(maxLife) * time.Minute
+		c.StartGC(time.Duration(tick) * time.Second)
+	}
+
+	return g
 }
 
 // GetResource - open resource to targeted grpc server
 func (g *GrpCox) GetResource(ctx context.Context, target string, plainText, isRestartConn bool) (*Resource, error) {
-	if conn, ok := g.activeConn[target]; ok {
-		if !isRestartConn && conn.refClient != nil && conn.clientConn != nil {
+	if conn, ok := g.activeConn.getConnection(target); ok {
+		if !isRestartConn && conn.isValid() {
 			return conn, nil
 		}
 		g.CloseActiveConns(target)
@@ -61,15 +82,16 @@ func (g *GrpCox) GetResource(ctx context.Context, target string, plainText, isRe
 	r.descSource = grpcurl.DescriptorSourceFromServer(ctx, r.refClient)
 	r.headers = h
 
-	g.activeConn[target] = r
+	g.activeConn.addConnection(target, r, g.maxLifeConn)
 	return r, nil
 }
 
 // GetActiveConns - get all saved active connection
 func (g *GrpCox) GetActiveConns(ctx context.Context) []string {
-	result := make([]string, len(g.activeConn))
+	active := g.activeConn.getAllConn()
+	result := make([]string, len(active))
 	i := 0
-	for k := range g.activeConn {
+	for k := range active {
 		result[i] = k
 		i++
 	}
@@ -79,19 +101,19 @@ func (g *GrpCox) GetActiveConns(ctx context.Context) []string {
 // CloseActiveConns - close conn by host or all
 func (g *GrpCox) CloseActiveConns(host string) error {
 	if host == "all" {
-		for k, v := range g.activeConn {
-			v.Close()
-			delete(g.activeConn, k)
+		for k := range g.activeConn.getAllConn() {
+			g.activeConn.delete(k)
 		}
 		return nil
 	}
 
-	if v, ok := g.activeConn[host]; ok {
-		v.Close()
-		delete(g.activeConn, host)
-	}
-
+	g.activeConn.delete(host)
 	return nil
+}
+
+// Extend extend connection based on setting max life
+func (g *GrpCox) Extend(host string) {
+	g.activeConn.extend(host, g.maxLifeConn)
 }
 
 func (g *GrpCox) dial(ctx context.Context, target string, plainText bool) (*grpc.ClientConn, error) {

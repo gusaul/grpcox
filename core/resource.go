@@ -182,8 +182,13 @@ func (r *Resource) Close() {
 	case <-done:
 		return
 	case <-time.After(3 * time.Second):
+		log.Printf("Connection %s falied to close\n", r.clientConn.Target())
 		return
 	}
+}
+
+func (r *Resource) isValid() bool {
+	return r.refClient != nil && r.clientConn != nil
 }
 
 func (r *Resource) exit(code int) {

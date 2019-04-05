@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -11,6 +12,16 @@ import (
 )
 
 func main() {
+	// logging conf
+	f, err := os.OpenFile("log/grpcox.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	defer f.Close()
+	log.SetOutput(f)
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	// start app
 	port := ":6969"
 	muxRouter := mux.NewRouter()
 	handler.Init(muxRouter)

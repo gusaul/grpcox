@@ -81,6 +81,7 @@ func (h *Handler) getLists(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.g.Extend(host)
 	response(w, result)
 }
 
@@ -130,6 +131,7 @@ func (h *Handler) describeFunction(w http.ResponseWriter, r *http.Request) {
 		Template string `json:"template"`
 	}
 
+	h.g.Extend(host)
 	response(w, desc{
 		Schema:   result,
 		Template: template,
@@ -171,6 +173,7 @@ func (h *Handler) invokeFunction(w http.ResponseWriter, r *http.Request) {
 		Result string `json:"result"`
 	}
 
+	h.g.Extend(host)
 	response(w, invRes{
 		Time:   timer.String(),
 		Result: result,

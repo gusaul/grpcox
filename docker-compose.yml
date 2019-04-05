@@ -6,3 +6,6 @@ services:
       - "6969:6969"
     volumes:
       - ./index:/index
+      - ./log:/log
+    env_file:
+      - config.env

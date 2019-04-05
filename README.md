@@ -10,6 +10,7 @@ turn [gRPCurl](https://github.com/fullstorydev/grpcurl) into web based UI, extre
 
 ## Installation
 ### Docker Compose
+from terminal, move to grpcox directory, then run command
 ```shell
 docker-compose up
 ```

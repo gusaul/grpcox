@@ -196,6 +196,7 @@ function hide_loading() {
 }
 
 $(".connections ul").on("click", "i", function(){
+    $icon = $(this);
     $parent = $(this).parent("li");
     var ip = $(this).siblings("span").text();
 
@@ -204,15 +205,15 @@ $(".connections ul").on("click", "i", function(){
         global: true,
         method: "DELETE",
         success: function(res){
+            $('[data-toggle="tooltip"]').tooltip('hide');
             if(res.data.success) {
                 $parent.remove();
                 updateCountNum();
             }
-            $('[data-toggle="tooltip"]').tooltip('hide');
         },
         error: err,
         beforeSend: function(xhr){
-            $(this).attr("class", "fa fa-spinner");
+            $icon.attr('class', 'fa fa-spinner');
         },
     });
 });

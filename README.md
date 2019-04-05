@@ -15,5 +15,19 @@ from terminal, move to grpcox directory, then run command
 docker-compose up
 ```
 
+configure app preferences by editing `config.env` file
+
+| var             | usage                                       | type   | unit   |
+|-----------------|---------------------------------------------|--------|--------|
+| MAX_LIFE_CONN   | maximum idle time connection before closed  | number | minute |
+| TICK_CLOSE_CONN | ticker interval to sweep expired connection | number | second |
+
+set value `0 (zero)` to disable auto close idle connection.
+
+then you can rebuild app by execute command
+```shell
+docker-compose up --build
+```
+
 ## Demo
 ![gRPCox Demo](https://raw.githubusercontent.com/gusaul/grpcox/master/index/img/demogrpcox.gif)

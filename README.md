@@ -5,7 +5,7 @@ turn [gRPCurl](https://github.com/fullstorydev/grpcurl) into web based UI, extre
 
 ## Features
 - Recognize and provide list of services and methods inside it as an options.
-- Automatically recognize schema input and compose it into JSON based. (ensure your gRPC server supports [server reflection](https://github.com/grpc/grpc/blob/master/src/proto/grpc/reflection/v1alpha/reflection.proto))
+- Automatically recognize schema input and compose it into JSON based. (ensure your gRPC server supports [server reflection](https://github.com/grpc/grpc/blob/master/src/proto/grpc/reflection/v1alpha/reflection.proto)). Examples for how to set up server reflection can be found [here](https://github.com/grpc/grpc/blob/master/doc/server-reflection.md#known-implementations).
 - Save established connection, and reuse it for next invoke/request (also can close/restart connection)
 
 ## Installation

@@ -1,7 +1,6 @@
 version: '3'
 services:
   grpcox:
-    network_mode: host
     build: .
     ports:
       - "6969:6969"

@@ -32,10 +32,5 @@ configure app preferences by editing `config.env` file
 
 set value `0 (zero)` to disable auto close idle connection.
 
-then you can rebuild app by execute command
-```shell
-docker-compose up --build
-```
-
 ## Demo
 ![gRPCox Demo](https://raw.githubusercontent.com/gusaul/grpcox/master/index/img/demogrpcox.gif)

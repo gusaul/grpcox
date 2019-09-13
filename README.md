@@ -14,6 +14,14 @@ from terminal, move to grpcox directory, then run command
 ```shell
 docker-compose up
 ```
+if you're using docker and want to connect gRPC on your local machine, then use
+<br/>`host.docker.internal:<your gRPC port>` instead of `localhost`
+
+### Golang
+if you have golang installed on your local machine, just run command
+```shell
+make start
+```
 
 configure app preferences by editing `config.env` file
 

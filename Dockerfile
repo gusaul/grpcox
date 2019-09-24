@@ -1,14 +1,18 @@
-FROM golang:1.10-alpine AS builder
+FROM golang:1.13-alpine AS builder
 
-WORKDIR /go/src/github.com/gusaul/grpcox
+ENV GO111MODULE=on
+
+#WORKDIR /go/src/github.com/gusaul/grpcox
+WORKDIR /src
 
 COPY . ./
-RUN go build -o grpcox grpcox.go
+RUN go mod tidy && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o grpcox grpcox.go
 
 
 FROM alpine
 
 COPY ./index /index
-COPY --from=builder /go/src/github.com/gusaul/grpcox/grpcox ./
+COPY --from=builder /src/grpcox ./
+RUN mkdir /log
 EXPOSE 6969
 ENTRYPOINT ["./grpcox"]

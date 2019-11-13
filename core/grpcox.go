@@ -7,12 +7,9 @@ import (
 	"time"
 
 	"github.com/fullstorydev/grpcurl"
-	"github.com/jhump/protoreflect/grpcreflect"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
-	"google.golang.org/grpc/metadata"
-	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
 )
 
 // GrpCox - main object
@@ -71,15 +68,12 @@ func (g *GrpCox) GetResource(ctx context.Context, target string, plainText, isRe
 	var err error
 	r := new(Resource)
 	h := append(g.headers, g.reflectHeaders...)
-	md := grpcurl.MetadataFromHeaders(h)
-	refCtx := metadata.NewOutgoingContext(ctx, md)
+	r.md = grpcurl.MetadataFromHeaders(h)
 	r.clientConn, err = g.dial(ctx, target, plainText)
 	if err != nil {
 		return nil, err
 	}
 
-	r.refClient = grpcreflect.NewClient(refCtx, reflectpb.NewServerReflectionClient(r.clientConn))
-	r.descSource = grpcurl.DescriptorSourceFromServer(ctx, r.refClient)
 	r.headers = h
 
 	g.activeConn.addConnection(target, r, g.maxLifeConn)

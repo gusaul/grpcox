@@ -9,6 +9,15 @@ turn [gRPCurl](https://github.com/fullstorydev/grpcurl) into web based UI, extre
 - Save established connection, and reuse it for next invoke/request (also can close/restart connection)
 
 ## Installation
+### Docker
+```shell
+docker pull gusaul/grpcox:latest
+```
+then run
+```shell
+docker run -p 6969:6969 -v {ABSOLUTE_PATH_TO_LOG}/log:/log -d gusaul/grpcox
+```
+
 ### Docker Compose
 from terminal, move to grpcox directory, then run command
 ```shell
@@ -22,6 +31,7 @@ if you have golang installed on your local machine, just run command
 ```shell
 make start
 ```
+from grpcox directory
 
 configure app preferences by editing `config.env` file
 

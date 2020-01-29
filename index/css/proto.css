@@ -1,0 +1,115 @@
+#proto-input {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+[type="file"] {
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    height: 1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute !important;
+    white-space: nowrap;
+    width: 1px; 
+}
+[type="file"] + label {
+    background-color: #59698d;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 5px;
+    transition: background-color 0.3s;
+}
+
+[type="file"]:focus + label,
+[type="file"] + label:hover {
+    background-color: #324674;
+}
+
+[type="file"]:focus + label {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
+}
+
+.proto-top-collection {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.proto-toggle {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 0.8rem;
+}
+
+.proto-toggle:hover {
+    cursor: pointer;
+}
+
+.proto-collection {
+    background-color: #e0dfe6;
+    border-radius: 5px;
+    min-height: 120px;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    align-content: center;
+    flex-direction: row;
+    padding: 20px;
+    padding-right: 0px;
+    flex-wrap: wrap;
+}
+
+.proto-item {
+    height: 80px;
+    margin-right: 20px;
+    margin-left: 10px;
+    margin-bottom: 30px;
+
+    display: inline-flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.proto-icon {
+    height: 80px;
+    opacity: 0.5;
+}
+
+.proto-desc {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+}
+
+.proto-caption {
+    font-weight: 600;
+    color: rgba(0,0,0,0.6);
+    font-size: 1rem;
+}
+
+.proto-size {
+    font-size: 1rem;
+    color: rgba(0,0,0,0.6);
+}
+
+.proto-remove {
+    background-color: rgba(0,0,0,0.5);
+    padding: 3px !important;
+    margin-left: 0px !important;
+    -webkit-box-shadow: none;
+	  -moz-box-shadow: none;
+	  box-shadow: none;
+}
+
+.proto-remove:hover {
+    background-color: rgba(255,0,0,0.4);
+}

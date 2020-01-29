@@ -9,15 +9,18 @@ $('#get-services').click(function(){
         restart = "1"
     }
 
-    if (target != t || restart == "1") {
+    // determine whether the proto connection will use local proto or not
+    const use_proto = $('#local-proto').is(":checked");
+
+    if (target != t || restart == "1" || use_proto) {
         target = t;
     } else {
         return false;
     }
 
-    $('.other-elem').hide();
-    var button = $(this).html();
-    $.ajax({
+    // prepare ajax options beforehand
+    // makes it easier for local proto to modify some of its properties
+    const ajaxProps = {
         url: "server/"+target+"/services?restart="+restart,
         global: true,
         method: "GET",
@@ -48,7 +51,21 @@ $('#get-services').click(function(){
             $(this).html(button);
             hide_loading();
         }
-    });
+    };
+
+    // modify ajax options if use local proto
+    if (use_proto) {
+        ajaxProps.method = "POST";
+        ajaxProps.enctype = "multipart/form-data";
+        ajaxProps.processData = false;
+        ajaxProps.contentType = false;
+        ajaxProps.cache = false;
+        ajaxProps.data = getProtos();
+    }
+
+    $('.other-elem').hide();
+    var button = $(this).html();
+    $.ajax(ajaxProps);
 });
 
 $('#select-service').change(function(){

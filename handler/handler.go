@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -70,6 +71,65 @@ func (h *Handler) getLists(w http.ResponseWriter, r *http.Request) {
 	restart, _ := strconv.ParseBool(r.FormValue("restart"))
 
 	res, err := h.g.GetResource(context.Background(), host, !useTLS, restart)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	result, err := res.List(service)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	h.g.Extend(host)
+	response(w, result)
+}
+
+// getListsWithProto handling client request for service list with proto
+func (h *Handler) getListsWithProto(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	host := vars["host"]
+	if host == "" {
+		writeError(w, fmt.Errorf("Invalid Host"))
+		return
+	}
+
+	service := vars["serv_name"]
+
+	useTLS, _ := strconv.ParseBool(r.Header.Get("use_tls"))
+	restart, _ := strconv.ParseBool(r.FormValue("restart"))
+
+	// limit upload file to 5mb
+	err := r.ParseMultipartForm(5 << 20)
+	if err != nil {
+		writeError(w, err)
+		return
+	}
+
+	// convert uploaded files to list of Proto struct
+	files := r.MultipartForm.File["protos"]
+	protos := make([]core.Proto, 0, len(files))
+	for _, file := range files {
+		fileData, err := file.Open()
+		if err != nil {
+			writeError(w, err)
+			return
+		}
+		defer fileData.Close()
+
+		content, err := ioutil.ReadAll(fileData)
+		if err != nil {
+			writeError(w, err)
+		}
+
+		protos = append(protos, core.Proto{
+			Name:    file.Filename,
+			Content: content,
+		})
+	}
+
+	res, err := h.g.GetResourceWithProto(context.Background(), host, !useTLS, restart, protos)
 	if err != nil {
 		writeError(w, err)
 		return

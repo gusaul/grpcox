@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"os"
+	"reflect"
 	"strconv"
 	"time"
 
@@ -29,6 +30,14 @@ type GrpCox struct {
 	key            string
 	serverName     string
 	isUnixSocket   func() bool
+}
+
+// Proto define protofile uploaded from client
+// will be used to be persisted to disk and indicator
+// whether connections should reflect from server or local proto
+type Proto struct {
+	Name    string
+	Content []byte
 }
 
 // InitGrpCox constructor
@@ -78,6 +87,24 @@ func (g *GrpCox) GetResource(ctx context.Context, target string, plainText, isRe
 
 	g.activeConn.addConnection(target, r, g.maxLifeConn)
 	return r, nil
+}
+
+// GetResourceWithProto - open resource to targeted grpc server using given protofile
+func (g *GrpCox) GetResourceWithProto(ctx context.Context, target string, plainText, isRestartConn bool, protos []Proto) (*Resource, error) {
+	r, err := g.GetResource(ctx, target, plainText, isRestartConn)
+	if err != nil {
+		return nil, err
+	}
+
+	// if given protofile is equal to current, skip adding protos as it's already
+	// persisted in the harddisk anyway
+	if reflect.DeepEqual(r.protos, protos) {
+		return r, nil
+	}
+
+	// add protos property to resource and persist it to harddisk
+	err = r.AddProtos(protos)
+	return r, err
 }
 
 // GetActiveConns - get all saved active connection

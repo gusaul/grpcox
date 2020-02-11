@@ -10,6 +10,7 @@
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/mdb.min.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
+  <link href="css/proto.css" rel="stylesheet">
 </head>
 
 <body>
@@ -26,6 +27,24 @@
         <div class="custom-control custom-checkbox">
           <input type="checkbox" class="custom-control-input" id="restart-conn">
           <label class="custom-control-label" for="restart-conn">Restart Connection</label>
+        </div>
+
+        <div class="input-group">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="local-proto">
+                <label class="custom-control-label" for="local-proto">Use local proto</label>
+            </div>
+        </div>
+
+        <div class="input-group" id="proto-input" style="display: none">
+            <div class="proto-top-collection">
+                <input class="proto-uploader" type="file" id="proto-file" multiple>
+                <label for="proto-file"><i class="fa fa-plus-circle"></i> proto files</label>
+
+                <span id="proto-collection-toggle" class="proto-toggle">Hide Proto Collection</span>
+            </div>
+
+            <div class="proto-collection"></div>
         </div>
 
         <div class="other-elem" id="choose-service" style="display: none">
@@ -118,6 +137,7 @@
   <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
   <script type="text/javascript" src="js/style.js"></script>
+  <script type="text/javascript" src="js/proto.js"></script>
 </body>
 
 </html>

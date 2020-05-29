@@ -121,7 +121,9 @@ func (c *ConnStore) addConnection(host string, res *Resource, ttl ...time.Durati
 		conn.expired = time.Now().Add(ttl[0])
 	}
 
+	c.Lock()
 	c.conn[host] = conn
+	c.Unlock()
 }
 
 func (c *ConnStore) getConnection(host string) (res *Resource, found bool) {

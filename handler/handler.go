@@ -221,8 +221,26 @@ func (h *Handler) invokeFunction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// context metadata
+	metadataHeader := r.Header.Get("Metadata")
+	metadataArr := strings.Split(metadataHeader, ",")
+
+	// construct array of string with "key: value" form to satisfy grpcurl MetadataFromHeaders
+	var metadata []string
+	var metadataStr string
+	for i, m := range metadataArr {
+		i += 1
+		if isEven := i % 2 == 0; isEven {
+			metadataStr = metadataStr+m
+			metadata = append(metadata, metadataStr)
+			metadataStr = ""
+			continue
+		}
+		metadataStr = fmt.Sprintf("%s:", m)
+	}
+
 	// get param
-	result, timer, err := res.Invoke(context.Background(), funcName, r.Body)
+	result, timer, err := res.Invoke(context.Background(), metadata, funcName, r.Body)
 	if err != nil {
 		writeError(w, err)
 		return

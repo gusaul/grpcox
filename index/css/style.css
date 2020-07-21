@@ -11,6 +11,7 @@ body {
     width: 120px;
 }
 .custom-pretty {
+    height: 500px;
     border:none!important;
 }
 .custom-control-label:hover {

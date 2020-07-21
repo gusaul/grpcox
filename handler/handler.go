@@ -221,8 +221,12 @@ func (h *Handler) invokeFunction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	md := r.Header.Get("metadata")
+
+	mds := strings.Split(md, ",")
+
 	// get param
-	result, timer, err := res.Invoke(context.Background(), funcName, r.Body)
+	result, timer, err := res.Invoke(context.Background(), funcName, r.Body, mds)
 	if err != nil {
 		writeError(w, err)
 		return

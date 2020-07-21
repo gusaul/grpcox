@@ -3,8 +3,6 @@ var target, use_tls, editor;
 window.onload = function () {
     let cachedTarget = localStorage.getItem("server_target")
 
-    console.log(cachedTarget !== "undefined")
-
     if (cachedTarget !== "undefined") {
         document.getElementById('server-target').value = cachedTarget;
     }
@@ -93,6 +91,7 @@ $('#select-service').change(function(){
         global: true,
         method: "GET",
         success: function(res){
+            console.log(res)
             if (res.error) {
                 alert(res.error);
                 return;
@@ -151,7 +150,9 @@ $('#invoke-func').click(function(){
     if (func == "") {
         return false;
     }
+
     var body = editor.getValue();
+    var metadata = $('#server-metadata').val();
     var button = $(this).html();
     $.ajax({
         url: "server/"+target+"/function/"+func+"/invoke",
@@ -159,6 +160,9 @@ $('#invoke-func').click(function(){
         method: "POST",
         data: body,
         dataType: "json",
+        headers: {
+            metadata: metadata
+        },
         success: function(res){
             if (res.error) {
                 alert(res.error);
@@ -187,6 +191,7 @@ function generate_editor(content) {
         editor.setValue(content);
         return true;
     }
+
     $("#editor").html(content);
     editor = ace.edit("editor");
     editor.setOptions({

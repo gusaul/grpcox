@@ -221,12 +221,20 @@ func (h *Handler) invokeFunction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	md := r.Header.Get("metadata")
+	// server metadata
+	mdsWithComma := strings.Split(r.Header.Get("metadata"), ",")
+	mdsWithCommaSpace := strings.Split(r.Header.Get("metadata"), ", ")
 
-	mds := strings.Split(md, ",")
+	var metadata []string
+
+	if len(mdsWithComma) > len(mdsWithCommaSpace) {
+		metadata = mdsWithComma
+	} else {
+		metadata = mdsWithCommaSpace
+	}
 
 	// get param
-	result, timer, err := res.Invoke(context.Background(), funcName, r.Body, mds)
+	result, timer, err := res.Invoke(context.Background(), funcName, r.Body, metadata)
 	if err != nil {
 		writeError(w, err)
 		return

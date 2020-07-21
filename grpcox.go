@@ -25,7 +25,7 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// start app
-	port := ":6969"
+	port := ":6968"
 	muxRouter := mux.NewRouter()
 	handler.Init(muxRouter)
 	var wait time.Duration = time.Second * 15

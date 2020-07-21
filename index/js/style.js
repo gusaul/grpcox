@@ -1,7 +1,19 @@
 var target, use_tls, editor;
 
+window.onload = function () {
+    let cachedTarget = localStorage.getItem("server_target")
+
+    console.log(cachedTarget !== "undefined")
+
+    if (cachedTarget !== "undefined") {
+        document.getElementById('server-target').value = cachedTarget;
+    }
+}
+
 $('#get-services').click(function(){
     var t = get_valid_target();
+
+    localStorage.setItem("server_target", t)
 
     use_tls = "false";
     var restart = "0"

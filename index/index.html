@@ -18,8 +18,7 @@
     <div class="row animated fadeIn">
       <div class="col">
         <div class="md-form input-group">
-          <input type="text" class="form-control" id="server-target">
-          <label for="server-target">gRPC Server Target</label>
+          <input type="text" class="form-control" id="server-target" placeholder="gRPC Server Target">
           <div class="input-group-append">
             <button id="get-services" class="btn btn-mdb-color waves-effect m-0" type="button"><i class="fa fa-plug"></i></button>
           </div>
@@ -68,6 +67,9 @@
         <div class="row other-elem" id="body-request" style="display: none">
           <div class="col-md-7">
             <div class="card">
+              <div class="card-body schema-body">
+                <pre id="editor2"></pre>
+              </div>
               <div class="card-body schema-body">
                 <pre id="editor"></pre>
               </div>

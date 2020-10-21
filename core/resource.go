@@ -32,6 +32,7 @@ type Resource struct {
 	descSource grpcurl.DescriptorSource
 	refClient  *grpcreflect.Client
 	protos     []Proto
+	protosets  []Proto
 
 	headers []string
 	md      metadata.MD
@@ -44,21 +45,31 @@ func (r *Resource) openDescriptor() error {
 	r.refClient = grpcreflect.NewClient(refCtx, reflectpb.NewServerReflectionClient(r.clientConn))
 
 	// if no protos available use server reflection
-	if r.protos == nil {
+	if r.protos == nil && r.protosets == nil {
 		r.descSource = grpcurl.DescriptorSourceFromServer(ctx, r.refClient)
 		return nil
 	}
 
 	protoPath := filepath.Join(BasePath, r.clientConn.Target())
 
-	// make list of protos name to be used as descriptor
-	protos := make([]string, 0, len(r.protos))
-	for _, proto := range r.protos {
-		protos = append(protos, proto.Name)
-	}
-
 	var err error
-	r.descSource, err = grpcurl.DescriptorSourceFromProtoFiles([]string{protoPath}, protos...)
+	if len(r.protosets) > 0 {
+		// make list of protos name to be used as descriptor
+		protos := make([]string, 0, len(r.protosets))
+		for _, proto := range r.protosets {
+			protos = append(protos, filepath.Join(protoPath, proto.Name))
+		}
+
+		r.descSource, err = grpcurl.DescriptorSourceFromProtoSets(protos...)
+	} else {
+		// make list of protos name to be used as descriptor
+		protos := make([]string, 0, len(r.protos))
+		for _, proto := range r.protos {
+			protos = append(protos, proto.Name)
+		}
+
+		r.descSource, err = grpcurl.DescriptorSourceFromProtoFiles([]string{protoPath}, protos...)
+	}
 	return err
 }
 
@@ -297,16 +308,27 @@ func (r *Resource) AddProtos(protos []Proto) error {
 		return err
 	}
 
+	var protoSlice, protosetSlice []Proto
 	for _, proto := range protos {
-		err := ioutil.WriteFile(filepath.Join(protoPath, "/", proto.Name),
-			prepareImport(proto.Content),
-			0777)
+		var err error
+		if strings.HasSuffix(proto.Name, ".protoset") {
+			protosetSlice = append(protosetSlice, proto)
+			err = ioutil.WriteFile(filepath.Join(protoPath, "/", proto.Name),
+				proto.Content,
+				0777)
+		} else {
+			protoSlice = append(protoSlice, proto)
+			err = ioutil.WriteFile(filepath.Join(protoPath, "/", proto.Name),
+				prepareImport(proto.Content),
+				0777)
+		}
 		if err != nil {
 			return err
 		}
 	}
 
-	r.protos = protos
+	r.protos = protoSlice
+	r.protosets = protosetSlice
 	return nil
 }
 

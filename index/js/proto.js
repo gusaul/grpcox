@@ -74,7 +74,7 @@ function handleProtoUpload() {
     const files = this.files;
 
     for (const file of files) {
-        if (!file.name.endsWith(".proto")) {
+        if (!file.name.endsWith(".proto") && !file.name.endsWith(".protoset")) {
             continue;
         }
         if (!protoMap.has(file.name)) {

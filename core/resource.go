@@ -204,6 +204,15 @@ func (r *Resource) Invoke(ctx context.Context, symbol string, in io.Reader) (str
 	}
 	os.Stdout = w
 
+	// copy the output in a separate goroutine so printing can't block indefinitely
+	outC := make(chan string, 1)
+	var buf bytes.Buffer
+	go func() {
+		io.Copy(&buf, f)
+		outC <- buf.String()
+		f.Close()
+	}()
+
 	rf, formatter, err := grpcurl.RequestParserAndFormatterFor(grpcurl.Format("json"), r.descSource, false, true, in)
 	if err != nil {
 		return "", 0, err
@@ -213,6 +222,7 @@ func (r *Resource) Invoke(ctx context.Context, symbol string, in io.Reader) (str
 	start := time.Now()
 	err = grpcurl.InvokeRPC(ctx, r.descSource, r.clientConn, symbol, r.headers, h, rf.Next)
 	end := time.Now().Sub(start) / time.Millisecond
+	w.Close()
 	if err != nil {
 		return "", end, err
 	}
@@ -221,15 +231,6 @@ func (r *Resource) Invoke(ctx context.Context, symbol string, in io.Reader) (str
 		return "", end, fmt.Errorf(h.Status.Message())
 	}
 
-	// copy the output in a separate goroutine so printing can't block indefinitely
-	outC := make(chan string)
-	go func() {
-		var buf bytes.Buffer
-		io.Copy(&buf, f)
-		outC <- buf.String()
-	}()
-
-	w.Close()
 	out := <-outC
 
 	return out, end, nil

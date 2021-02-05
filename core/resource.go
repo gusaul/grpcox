@@ -49,7 +49,7 @@ func (r *Resource) openDescriptor() error {
 		return nil
 	}
 
-	protoPath := filepath.Join(BasePath, r.clientConn.Target())
+	protoPath := strings.ReplaceAll(filepath.Join(BasePath, r.clientConn.Target()),":", "_")
 
 	// make list of protos name to be used as descriptor
 	protos := make([]string, 0, len(r.protos))
@@ -266,7 +266,7 @@ func (r *Resource) exit(code int) {
 // proto files will be persisted in /tmp/grpcox/127.0.0.1:8888
 // if the directory is already there, remove it first
 func (r *Resource) AddProtos(protos []Proto) error {
-	protoPath := filepath.Join(BasePath, r.clientConn.Target())
+	protoPath := strings.ReplaceAll(filepath.Join(BasePath, r.clientConn.Target()),":", "_")
 	err := os.MkdirAll(protoPath, 0777)
 	if os.IsExist(err) {
 		os.RemoveAll(protoPath)

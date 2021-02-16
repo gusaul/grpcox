@@ -39,6 +39,7 @@ configure app preferences by editing `config.env` file
 |-----------------|---------------------------------------------|--------|--------|
 | MAX_LIFE_CONN   | maximum idle time connection before closed  | number | minute |
 | TICK_CLOSE_CONN | ticker interval to sweep expired connection | number | second |
+| BIND_ADDR       | ip:port to bind service                     | string |  |
 
 set value `0 (zero)` to disable auto close idle connection.
 

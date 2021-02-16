@@ -25,20 +25,23 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// start app
-	port := ":6969"
+	addr := "0.0.0.0:6969"
+	if value, ok := os.LookupEnv("BIND_ADDR"); ok {
+		addr = value
+	}
 	muxRouter := mux.NewRouter()
 	handler.Init(muxRouter)
 	var wait time.Duration = time.Second * 15
 
 	srv := &http.Server{
-		Addr:         "0.0.0.0" + port,
+		Addr:         addr,
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
 		Handler:      muxRouter,
 	}
 
-	fmt.Println("Service started on", port)
+	fmt.Println("Service started on", addr)
 	go func() {
 		log.Fatal(srv.ListenAndServe())
 	}()

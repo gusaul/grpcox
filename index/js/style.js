@@ -135,6 +135,13 @@ $('#select-function').change(function(){
 });
 
 $('#invoke-func').click(function(){
+
+    // use metadata if there is any
+    ctxArr = [];
+    $(".ctx-metadata-input-field").each(function(index, val){
+        ctxArr.push($(val).text())
+    });
+
     var func = $('#select-function').val();
     if (func == "") {
         return false;
@@ -160,6 +167,9 @@ $('#invoke-func').click(function(){
         beforeSend: function(xhr){
             $('#response').hide();
             xhr.setRequestHeader('use_tls', use_tls);
+            if(ctxUse) {
+                xhr.setRequestHeader('Metadata', ctxArr);
+            }
             $(this).html("Loading...");
             show_loading();
         },

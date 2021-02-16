@@ -184,7 +184,7 @@ func (r *Resource) Describe(symbol string) (string, string, error) {
 }
 
 // Invoke - invoking gRPC function
-func (r *Resource) Invoke(ctx context.Context, symbol string, in io.Reader) (string, time.Duration, error) {
+func (r *Resource) Invoke(ctx context.Context, metadata []string, symbol string, in io.Reader) (string, time.Duration, error) {
 	err := r.openDescriptor()
 	if err != nil {
 		return "", 0, err
@@ -199,8 +199,13 @@ func (r *Resource) Invoke(ctx context.Context, symbol string, in io.Reader) (str
 	}
 	h := grpcurl.NewDefaultEventHandler(&resultBuffer, r.descSource, formatter, false)
 
+	var headers = r.headers
+	if len(metadata) != 0 {
+		headers = metadata
+	}
+
 	start := time.Now()
-	err = grpcurl.InvokeRPC(ctx, r.descSource, r.clientConn, symbol, r.headers, h, rf.Next)
+	err = grpcurl.InvokeRPC(ctx, r.descSource, r.clientConn, symbol, headers, h, rf.Next)
 	end := time.Now().Sub(start) / time.Millisecond
 	if err != nil {
 		return "", end, err

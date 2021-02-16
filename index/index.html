@@ -47,6 +47,50 @@
             <div class="proto-collection"></div>
         </div>
 
+        <!-- Context metadata -->
+        <div class="input-group">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="ctx-metadata-switch">
+            <label class="custom-control-label" for="ctx-metadata-switch">Use request metadata</label>
+          </div>
+        </div>
+
+        <div class="input-group" id="ctx-metadata-input" style="display: none">
+          <br>
+          <div id="ctx-metadata-table" class="table-editable">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th class="text-start" style="width: 10%"></th>
+                  <th class="text-start" style="width: 20%">Key</th>
+                  <th class="text-start" style="width: 70%">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                        <span class="table-remove">
+                          <button type="button" class="btn btn-danger btn-rounded btn-sm my-0">
+                            <i class="fa fa-times"></i>
+                          </button>
+                        </span>
+                  </td>
+                  <td class="ctx-metadata-input-field pt-3-half" contenteditable="true"></td>
+                  <td class="ctx-metadata-input-field pt-3-half" contenteditable="true"></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="input-group-append">
+                  <span class="table-add">
+                    <button type="button" class="btn btn-success btn-rounded btn-sm my-0">
+                      <i class="fa fa-plus"></i>
+                    </button>
+                  </span>
+            </div>
+          </div>
+        </div>
+        <!-- Context metadata -->
+
         <div class="other-elem" id="choose-service" style="display: none">
           <div class="input-group">
             <div class="input-group-prepend">
@@ -138,6 +182,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
   <script type="text/javascript" src="js/style.js"></script>
   <script type="text/javascript" src="js/proto.js"></script>
+  <script type="text/javascript" src="js/ctx.metadata.js"></script>
 </body>
 
 </html>

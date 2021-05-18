@@ -60,7 +60,7 @@ func Test_prepareImport(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := prepareImport(tt.args.proto, ""); !reflect.DeepEqual(got, tt.want) {
+			if got := prepareImport(tt.args.proto); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("prepareImport() = %v, want %v",
 					string(got),
 					string(tt.want))

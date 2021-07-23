@@ -8,6 +8,9 @@ $('#get-services').click(function(){
     if($('#restart-conn').is(":checked")) {
         restart = "1"
     }
+    if($('#use-tls').is(":checked")) {
+        use_tls = "true"
+    }
 
     // determine whether the proto connection will use local proto or not
     const use_proto = $('#local-proto').is(":checked");

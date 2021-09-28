@@ -1,11 +1,30 @@
-var target, use_tls, editor;
+var target, use_tls, editor, targetScroll, mode;
 
-$('#get-services').click(function(){
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    switch (e.target.innerHTML) {
+        case "Mode 1":
+            mode = 'select';
+            break;
+        case "Mode 2":
+            mode = 'input';
+            break;
+    }
+});
+
+$('#select-server-target').change(function () {
+    if ($(this).val() == "") {
+        return
+    }
+
+    $('#select-get-services').click();
+});
+
+$('.get-services').click(function () {
     var t = get_valid_target();
 
     use_tls = "false";
     var restart = "0"
-    if($('#restart-conn').is(":checked")) {
+    if ($('#restart-conn').is(":checked")) {
         restart = "1"
     }
 
@@ -21,10 +40,10 @@ $('#get-services').click(function(){
     // prepare ajax options beforehand
     // makes it easier for local proto to modify some of its properties
     const ajaxProps = {
-        url: "server/"+target+"/services?restart="+restart,
+        url: "server/" + target + "/services?restart=" + restart,
         global: true,
         method: "GET",
-        success: function(res){
+        success: function (res) {
             if (res.error) {
                 target = "";
                 use_tls = "";
@@ -35,18 +54,18 @@ $('#get-services').click(function(){
             $.each(res.data, (_, item) => $("#select-service").append(new Option(item, item)));
             $('#choose-service').show();
         },
-        error: function(_, _, errorThrown) {
+        error: function (_, _, errorThrown) {
             target = "";
             use_tls = "";
             alert(errorThrown);
         },
-        beforeSend: function(xhr){
+        beforeSend: function (xhr) {
             $('#choose-service').hide();
             xhr.setRequestHeader('use_tls', use_tls);
             $(this).html("Loading...");
             show_loading();
         },
-        complete: function(){
+        complete: function () {
             applyConnCount();
             $(this).html(button);
             hide_loading();
@@ -68,7 +87,7 @@ $('#get-services').click(function(){
     $.ajax(ajaxProps);
 });
 
-$('#select-service').change(function(){
+$('#select-service').change(function () {
     var selected = $(this).val();
     if (selected == "") {
         return false;
@@ -77,31 +96,31 @@ $('#select-service').change(function(){
     $('#body-request').hide();
     $('#response').hide();
     $.ajax({
-        url: "server/"+target+"/service/"+selected+"/functions",
+        url: "server/" + target + "/service/" + selected + "/functions",
         global: true,
         method: "GET",
-        success: function(res){
+        success: function (res) {
             if (res.error) {
                 alert(res.error);
                 return;
             }
             $("#select-function").html(new Option("Choose Method", ""));
-            $.each(res.data, (_, item) => $("#select-function").append(new Option(item.substr(selected.length) , item)));
+            $.each(res.data, (_, item) => $("#select-function").append(new Option(item.substr(selected.length), item)));
             $('#choose-function').show();
         },
         error: err,
-        beforeSend: function(xhr){
+        beforeSend: function (xhr) {
             $('#choose-function').hide();
             xhr.setRequestHeader('use_tls', use_tls);
             show_loading();
         },
-        complete: function(){
+        complete: function () {
             hide_loading();
         }
     });
 });
 
-$('#select-function').change(function(){
+$('#select-function').change(function () {
     var selected = $(this).val();
     if (selected == "") {
         return false;
@@ -109,10 +128,10 @@ $('#select-function').change(function(){
 
     $('#response').hide();
     $.ajax({
-        url: "server/"+target+"/function/"+selected+"/describe",
+        url: "server/" + target + "/function/" + selected + "/describe",
         global: true,
         method: "GET",
-        success: function(res){
+        success: function (res) {
             if (res.error) {
                 alert(res.error);
                 return;
@@ -123,22 +142,22 @@ $('#select-function').change(function(){
             $('#body-request').show();
         },
         error: err,
-        beforeSend: function(xhr){
+        beforeSend: function (xhr) {
             $('#body-request').hide();
             xhr.setRequestHeader('use_tls', use_tls);
             show_loading();
         },
-        complete: function(){
+        complete: function () {
             hide_loading();
         }
     });
 });
 
-$('#invoke-func').click(function(){
+$('#invoke-func').click(function () {
 
     // use metadata if there is any
     ctxArr = [];
-    $(".ctx-metadata-input-field").each(function(index, val){
+    $(".ctx-metadata-input-field").each(function (index, val) {
         ctxArr.push($(val).text())
     });
 
@@ -149,12 +168,12 @@ $('#invoke-func').click(function(){
     var body = editor.getValue();
     var button = $(this).html();
     $.ajax({
-        url: "server/"+target+"/function/"+func+"/invoke",
+        url: "server/" + target + "/function/" + func + "/invoke",
         global: true,
         method: "POST",
         data: body,
         dataType: "json",
-        success: function(res){
+        success: function (res) {
             if (res.error) {
                 alert(res.error);
                 return;
@@ -164,24 +183,27 @@ $('#invoke-func').click(function(){
             $('#response').show();
         },
         error: err,
-        beforeSend: function(xhr){
+        beforeSend: function (xhr) {
             $('#response').hide();
             xhr.setRequestHeader('use_tls', use_tls);
-            if(ctxUse) {
+            if (ctxUse) {
                 xhr.setRequestHeader('Metadata', ctxArr);
             }
             $(this).html("Loading...");
             show_loading();
         },
-        complete: function(){
+        complete: function () {
             $(this).html(button);
             hide_loading();
+            $('html, body').animate({
+                scrollTop: targetScroll
+            }, 500);
         }
     });
 });
 
 function generate_editor(content) {
-    if(editor) {
+    if (editor) {
         editor.setValue(content);
         return true;
     }
@@ -197,14 +219,16 @@ function generate_editor(content) {
 }
 
 function get_valid_target() {
-    t = $('#server-target').val().trim();
+    el = $(`#${mode}-server-target`)
+
+    t = el.val().trim();
     if (t == "") {
         return target;
     }
 
     ts = t.split("://");
     if (ts.length > 1) {
-        $('#server-target').val(ts[1]);
+        el.val(ts[1]);
         return ts[1];
     }
     return ts[0];
@@ -222,7 +246,7 @@ function hide_loading() {
     $('.spinner').hide();
 }
 
-$(".connections ul").on("click", "i", function(){
+$(".connections ul").on("click", "i", function () {
     $icon = $(this);
     $parent = $(this).parent("li");
     var ip = $(this).siblings("span").text();
@@ -231,15 +255,15 @@ $(".connections ul").on("click", "i", function(){
         url: "active/close/" + ip,
         global: true,
         method: "DELETE",
-        success: function(res){
+        success: function (res) {
             $('[data-toggle="tooltip"]').tooltip('hide');
-            if(res.data.success) {
+            if (res.data.success) {
                 $parent.remove();
                 updateCountNum();
             }
         },
         error: err,
-        beforeSend: function(xhr){
+        beforeSend: function (xhr) {
             $icon.attr('class', 'fa fa-spinner');
         },
     });
@@ -256,10 +280,10 @@ function applyConnCount() {
         url: "active/get",
         global: true,
         method: "GET",
-        success: function(res){
+        success: function (res) {
             $(".connections .title span").html(res.data.length);
             $(".connections .nav").html("");
-            res.data.forEach(function(item){
+            res.data.forEach(function (item) {
                 $list = $("#conn-list-template").clone();
                 $list.find(".ip").html(item);
                 $(".connections .nav").append($list.html());
@@ -284,6 +308,8 @@ function refreshToolTip() {
     })
 }
 
-$(document).ready(function(){
+$(document).ready(function () {
+    mode = 'select'
     refreshConnCount();
+    targetScroll = window.innerHeight + 50;
 });

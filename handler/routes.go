@@ -29,6 +29,7 @@ func Init(router *mux.Router) {
 	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir(assetsPath+"/js/"))))
 	router.PathPrefix("/font/").Handler(http.StripPrefix("/font/", http.FileServer(http.Dir(assetsPath+"/font/"))))
 	router.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(http.Dir(assetsPath+"/img/"))))
+	router.PathPrefix("/database/").Handler(http.StripPrefix("/database/", http.FileServer(http.Dir(assetsPath+"/database/"))))
 }
 
 func corsHandler(h http.HandlerFunc) http.HandlerFunc {

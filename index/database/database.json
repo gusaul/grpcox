@@ -1,0 +1,10 @@
+[
+    {
+        "name": "Example 1",
+        "ip": "localhost:8000"
+    },
+    {
+        "name": "Example 2",
+        "ip": "localhost:8585"
+    }
+]

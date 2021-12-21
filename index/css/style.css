@@ -201,3 +201,52 @@ circle {
         -webkit-transform: scaleY(1.0);
     }
 }
+
+.save-button-dropdown {
+    padding-left: 10px;
+    padding-right: 15px;
+}
+
+.save-button-dropdown .dropdown-menu.show {
+    transform: translate3d(639px, 46px, 0px);
+}
+
+.one-long-line {
+    margin-bottom: 0;
+    margin-left: 5px;
+    max-width: 100%;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+.one-long-line:hover {
+    cursor: pointer;
+    overflow:visible;
+}
+
+.column-row-left {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+}
+
+.column-row-left .md-form{
+    margin-bottom: 0;
+}
+
+.search {
+    width: 100%;
+}
+
+.request-list {
+    display: flex;
+    padding: 5px;
+}
+
+.request-list .fa {
+    color: red;
+}
+
+.request-list.selected {
+    background: #dadfe3;;
+}

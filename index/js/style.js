@@ -1,6 +1,11 @@
 var target, use_tls, editor;
 
 $('#get-services').click(function(){
+
+    // reset all selected list
+    resetReqResData()
+    removeRequestSelectedClass()
+
     var t = get_valid_target();
 
     use_tls = "false";

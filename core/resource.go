@@ -285,8 +285,14 @@ func (r *Resource) AddProtos(protos []Proto) error {
 	protoPath := filepath.Join(BasePath, r.clientConn.Target())
 	err := os.MkdirAll(protoPath, 0777)
 	if os.IsExist(err) {
-		os.RemoveAll(protoPath)
+		err = os.RemoveAll(protoPath)
+		if err != nil {
+			return err
+		}
 		err = os.MkdirAll(protoPath, 0777)
+		if err != nil {
+			return err
+		}
 	} else if err != nil {
 		return err
 	}

@@ -17,6 +17,12 @@ $('#get-services').click(function(){
         use_tls = "true"
     }
 
+    // use metadata if there is any
+    ctxArr = [];
+    $(".ctx-metadata-input-field").each(function(index, val){
+        ctxArr.push($(val).text())
+    });
+
     // determine whether the proto connection will use local proto or not
     const use_proto = $('#local-proto').is(":checked");
 
@@ -51,6 +57,9 @@ $('#get-services').click(function(){
         beforeSend: function(xhr){
             $('#choose-service').hide();
             xhr.setRequestHeader('use_tls', use_tls);
+            if(ctxUse) {
+                xhr.setRequestHeader('Metadata', ctxArr);
+            }
             $(this).html("Loading...");
             show_loading();
         },

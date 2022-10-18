@@ -137,6 +137,11 @@ func (g *GrpCox) Extend(host string) {
 	g.activeConn.extend(host, g.maxLifeConn)
 }
 
+// SetReflectHeaders sets grpcox reflection headers
+func (g *GrpCox) SetReflectHeaders(headers ...string) {
+	g.reflectHeaders = headers
+}
+
 func (g *GrpCox) dial(ctx context.Context, target string, plainText bool) (*grpc.ClientConn, error) {
 	dialTime := 10 * time.Second
 	ctx, cancel := context.WithTimeout(ctx, dialTime)

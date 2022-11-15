@@ -11,9 +11,20 @@
   <link href="css/mdb.min.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
   <link href="css/proto.css" rel="stylesheet">
+  <link href="css/prettify-dark.css" id="prettify-css" rel="stylesheet">
 </head>
 
 <body>
+  <div class="container">
+              <div class="row float-right">
+                <div class="col-md-4">
+                  <button id="btn-dark-mode" class="btn btn-dark" onclick="toggleTheme()">
+                    <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+  </div>
+
   <div class="container-fluid pt-50">
     <div class="row animated fadeIn justify-content-md-center">
       <div class="col-3">
@@ -21,7 +32,7 @@
           <div class="col" style="padding-left: 70px;">
             <div class="row column-row-left">
               <div class="md-form input-group">
-                <input type="text" class="form-control search" id="search-request" onkeyup="search(this)">
+                <input type="text" class="form-control search text-input" id="search-request" onkeyup="search(this)">
                 <label for="search-request" class="">Search Request</label>
               </div>
               <ul class="list-group list-group-flush list" id="request-list"></ul>
@@ -32,7 +43,7 @@
 
       <div class="col-7">
         <div class="md-form input-group">
-          <input type="text" class="form-control" id="server-target">
+          <input type="text" class="form-control text-input" id="server-target">
           <label for="server-target">gRPC Server Target</label>
           <div class="input-group-append">
             <button id="get-services" class="btn btn-mdb-color waves-effect m-0" type="button"><i class="fa fa-plug"></i></button>
@@ -231,7 +242,8 @@
   <script type="text/javascript" src="js/popper.min.js"></script>
   <script type="text/javascript" src="js/bootstrap.min.js"></script>
   <script type="text/javascript" src="js/mdb.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script> -->
+  <script type="text/javascript" src="js/google-code-prettify/prettify.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.1/ace.js"></script>
   <script type="text/javascript" src="js/db.js"></script>
   <script type="text/javascript" src="js/style.js"></script>

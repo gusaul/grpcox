@@ -3,14 +3,13 @@ package handler
 import (
 	"net/http"
 
+	assetfs "github.com/elazarl/go-bindata-assetfs"
 	"github.com/gorilla/mux"
 )
 
 // Init - routes initialization
 func Init(router *mux.Router) {
 	h := InitHandler()
-
-	router.HandleFunc("/", h.index)
 
 	ajaxRoute := router.PathPrefix("/server/{host}").Subrouter()
 	ajaxRoute.HandleFunc("/services", corsHandler(h.getLists)).Methods(http.MethodGet, http.MethodOptions)
@@ -24,11 +23,9 @@ func Init(router *mux.Router) {
 	// close active connection
 	router.HandleFunc("/active/close/{host}", corsHandler(h.closeActiveConns)).Methods(http.MethodDelete, http.MethodOptions)
 
-	assetsPath := "index"
-	router.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir(assetsPath+"/css/"))))
-	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir(assetsPath+"/js/"))))
-	router.PathPrefix("/font/").Handler(http.StripPrefix("/font/", http.FileServer(http.Dir(assetsPath+"/font/"))))
-	router.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(http.Dir(assetsPath+"/img/"))))
+	// Serve assets with assetfs
+	fs := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, AssetInfo: AssetInfo, Prefix: "index"}
+	router.PathPrefix("/").Handler(http.FileServer(fs))
 }
 
 func corsHandler(h http.HandlerFunc) http.HandlerFunc {

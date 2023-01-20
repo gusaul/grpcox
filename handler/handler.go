@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io/ioutil"
@@ -23,18 +22,6 @@ func InitHandler() *Handler {
 	return &Handler{
 		g: core.InitGrpCox(),
 	}
-}
-
-func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
-	body := new(bytes.Buffer)
-	err := indexHTML.Execute(body, make(map[string]string))
-	if err != nil {
-		writeError(w, err)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write(body.Bytes())
 }
 
 func (h *Handler) getActiveConns(w http.ResponseWriter, r *http.Request) {

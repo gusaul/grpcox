@@ -43,5 +43,50 @@ configure app preferences by editing `config.env` file
 
 set value `0 (zero)` to disable auto close idle connection.
 
+
 ## Demo
 ![gRPCox Demo](https://raw.githubusercontent.com/gusaul/grpcox/master/index/img/demogrpcox.gif)
+
+
+## Using AssetFs
+
+By using assetfs this tool can be compiled into 1 binary file, so that it will be easier to use. 
+
+Please update assetfs when any files inside index folder are modified:
+
+```shell
+
+# Install required package
+$ go get github.com/go-bindata/go-bindata/...
+$ go get github.com/elazarl/go-bindata-assetfs/...
+
+# Update assetfs
+$ go-bindata-assetfs -pkg handler -o handler/binddata.go  index/... 
+```
+
+### Compile
+
+if you have golang installed on your local machine, just run command
+```shell
+# Windows
+go build -o grpcox.exe
+
+# Unix
+go build -o grpcox
+```
+from grpcox directory
+
+configure app preferences by editing `config.env` file
+
+| var             | usage                                       | type   | unit   |
+|-----------------|---------------------------------------------|--------|--------|
+| MAX_LIFE_CONN   | maximum idle time connection before closed  | number | minute |
+| TICK_CLOSE_CONN | ticker interval to sweep expired connection | number | second |
+| BIND_ADDR       | ip:port to bind service                     | string |  |
+
+set value `0 (zero)` to disable auto close idle connection.
+
+
+### How to use?
+
+Copy your binary file (ex: grpcox.exe) to your favorite folder, and just run it.

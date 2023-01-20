@@ -15,6 +15,11 @@ import (
 )
 
 func main() {
+	// create folder "log" if not exists
+	if _, err := os.Stat("log"); os.IsNotExist(err) {
+		os.Mkdir("log", os.ModePerm)
+	}
+
 	// logging conf
 	f, err := os.OpenFile("log/grpcox.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {

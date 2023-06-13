@@ -210,7 +210,7 @@ func (r *Resource) Invoke(ctx context.Context, metadata []string, symbol string,
 	}
 	h := grpcurl.NewDefaultEventHandler(&resultBuffer, r.descSource, formatter, false)
 
-	var headers = r.headers
+	var headers []string
 	if len(metadata) != 0 {
 		headers = metadata
 	}

@@ -83,6 +83,7 @@ func (g *GrpCox) GetResource(ctx context.Context, target string, plainText, isRe
 		return nil, err
 	}
 
+	// what is r.Headers used for?
 	r.headers = h
 
 	g.activeConn.addConnection(target, r, g.maxLifeConn)

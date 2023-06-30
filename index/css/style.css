@@ -1,6 +1,50 @@
+/* if no preference given */
 body {
+    --text-color: #222;
+    --bkg-color: #fff;
+    --input-color: #222 !important;
+    --card-color: #fff !important;
+    
+}
+body.dark-theme {
+    --text-color: #eee;
+    --bkg-color: #121212;
+    --input-color: #fff !important;
+    --card-color: #1D1F21 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* defaults to dark theme */
+    body {
+      --text-color: #eee;
+      --bkg-color: #121212;
+      --input-color: #fff !important;
+      --card-color: #1D1F21 !important;
+    }
+    body.light-theme {
+      --text-color: #222;
+      --bkg-color: #fff;
+      --input-color: #222 !important;
+      --card-color: #fff !important;
+    }
+}
+
+
+/* set color properties based on theme */
+body {
+    background-color: var(--bkg-color);
+    color: var(--text-color);
     padding-bottom: 50px;
 }
+
+.text-input{
+    color: var(--input-color) !important;
+}
+
+.card {
+    background-color:  var(--card-color) !important;
+}
+
 .mt-10 {
     margin-top:10px;
 }

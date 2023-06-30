@@ -1,4 +1,4 @@
-var target, use_tls, editor;
+var target, use_tls, editor, curr_theme;
 
 $('#get-services').click(function(){
 
@@ -197,6 +197,8 @@ $('#invoke-func').click(function(){
     });
 });
 
+
+
 function generate_editor(content) {
     if(editor) {
         editor.setValue(content);
@@ -208,9 +210,15 @@ function generate_editor(content) {
         maxLines: Infinity
     });
     editor.renderer.setScrollMargin(10, 10, 10, 10);
-    editor.setTheme("ace/theme/github");
     editor.session.setMode("ace/mode/json");
     editor.renderer.setShowGutter(false);
+
+    if(curr_theme == "light"){
+        editor.setTheme("ace/theme/github");
+    } else {
+        editor.setTheme("ace/theme/tomorrow_night");
+    }
+
 }
 
 function get_valid_target() {
@@ -303,4 +311,60 @@ function refreshToolTip() {
 
 $(document).ready(function(){
     refreshConnCount();
+    initTheme();
 });
+
+/* get OS color scheme preference */
+const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+function initTheme(){
+    if (prefersDarkScheme.matches) {
+        curr_theme = "dark";
+    } else {
+        curr_theme = "light";
+    }
+
+    setTheme(curr_theme);
+}
+
+/* to be called from lamp button */
+function toggleTheme(){
+    if(curr_theme == "dark"){
+        curr_theme = "light";
+    } else {
+        curr_theme = "dark";
+    }
+    setTheme(curr_theme);
+}
+
+function setTheme(theme){
+    let editor_theme, prettify_css_href;
+    if (theme==="light") {
+        editor_theme = "ace/theme/github";
+        prettify_css_href = "css/prettify.css";
+        document.body.classList.remove("dark-theme");
+        document.body.classList.add("light-theme");
+        let text_inputs = document.getElementsByClassName("text-input");
+        for(const element of text_inputs){
+            element.classList.remove("dark-theme");
+            element.classList.add("light-theme");
+        }
+        document.getElementById("prettify-css").href="css/prettify.css";
+    } else {
+        editor_theme = "ace/theme/tomorrow_night";
+        prettify_css_href = "css/prettify-dark.css";
+        document.body.classList.remove("light-theme");
+        document.body.classList.add("dark-theme");
+        let text_inputs = document.getElementsByClassName("text-input");
+        for(const element of text_inputs){
+            element.classList.remove("light-theme");
+            element.classList.add("dark-theme");
+        }
+    }
+
+    document.getElementById("prettify-css").href=prettify_css_href;
+    if(editor){
+        editor.setTheme(editor_theme);
+        
+    }
+}
+

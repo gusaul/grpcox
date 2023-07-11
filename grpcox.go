@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,21 +15,29 @@ import (
 	"github.com/gusaul/grpcox/handler"
 )
 
+var (
+	logfile string
+	port    int
+)
+
 func main() {
+	flag.StringVar(&logfile, "log", "", "Specify log file")
+	flag.IntVar(&port, "port", 6969, "Specify port server")
+	flag.Parse()
+
 	// logging conf
-	f, err := os.OpenFile("log/grpcox.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("error opening file: %v", err)
+	if logfile != "" {
+		f, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalf("error opening file: %v", err)
+		}
+		defer f.Close()
+		log.SetOutput(f)
+		log.SetFlags(log.LstdFlags | log.Lshortfile)
 	}
-	defer f.Close()
-	log.SetOutput(f)
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// start app
-	addr := "0.0.0.0:6969"
-	if value, ok := os.LookupEnv("BIND_ADDR"); ok {
-		addr = value
-	}
+	addr := fmt.Sprintf(":%d", port)
 	muxRouter := mux.NewRouter()
 	handler.Init(muxRouter)
 	var wait time.Duration = time.Second * 15
@@ -59,7 +68,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), wait)
 	defer cancel()
 
-	err = removeProtos()
+	err := removeProtos()
 	if err != nil {
 		log.Printf("error while removing protos: %s", err.Error())
 	}

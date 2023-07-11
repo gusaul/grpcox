@@ -5,16 +5,20 @@ import (
 	"html/template"
 	"net/http"
 	"regexp"
+
+	"github.com/gusaul/grpcox/index"
 )
 
 var (
 	reGetFuncArg *regexp.Regexp
 	indexHTML    *template.Template
+
+	fs = index.FS
 )
 
 func init() {
 	reGetFuncArg = regexp.MustCompile("\\( (.*) \\) returns")
-	indexHTML = template.Must(template.New("index.html").Delims("{[", "]}").ParseFiles("index/index.html"))
+	indexHTML = template.Must(template.New("index.html").Delims("{[", "]}").ParseFS(fs, "index.html"))
 }
 
 // Response - Standar ajax Response

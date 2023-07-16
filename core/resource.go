@@ -38,10 +38,15 @@ type Resource struct {
 	md      metadata.MD
 }
 
-//openDescriptor - use it to reflect server descriptor
-func (r *Resource) openDescriptor() error {
+// openDescriptor - use it to reflect server descriptor
+func (r *Resource) openDescriptor(reflectHeaders []string) error {
 	ctx := context.Background()
-	refCtx := metadata.NewOutgoingContext(ctx, r.md)
+	outgoingMD := r.md.Copy()
+	md := grpcurl.MetadataFromHeaders(reflectHeaders)
+	for k, v := range md {
+		outgoingMD.Append(k, v...)
+	}
+	refCtx := metadata.NewOutgoingContext(ctx, outgoingMD)
 	r.refClient = grpcreflect.NewClient(refCtx, reflectpb.NewServerReflectionClient(r.clientConn))
 
 	// if no protos available use server reflection
@@ -73,7 +78,7 @@ func (r *Resource) openDescriptor() error {
 	return err
 }
 
-//closeDescriptor - please ensure to always close after open in the same flow
+// closeDescriptor - please ensure to always close after open in the same flow
 func (r *Resource) closeDescriptor() {
 	done := make(chan int)
 	go func() {
@@ -95,8 +100,8 @@ func (r *Resource) closeDescriptor() {
 // List - To list all services exposed by a server
 // symbol can be "" to list all available services
 // symbol also can be service name to list all available method
-func (r *Resource) List(symbol string) ([]string, error) {
-	err := r.openDescriptor()
+func (r *Resource) List(symbol string, reflectHeaders []string) ([]string, error) {
+	err := r.openDescriptor(reflectHeaders)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +142,7 @@ func (r *Resource) List(symbol string) ([]string, error) {
 // It also prints a description of that symbol, in the form of snippets of proto source.
 // It won't necessarily be the original source that defined the element, but it will be equivalent.
 func (r *Resource) Describe(symbol string) (string, string, error) {
-	err := r.openDescriptor()
+	err := r.openDescriptor(nil)
 	if err != nil {
 		return "", "", err
 	}
@@ -196,7 +201,7 @@ func (r *Resource) Describe(symbol string) (string, string, error) {
 
 // Invoke - invoking gRPC function
 func (r *Resource) Invoke(ctx context.Context, metadata []string, symbol string, in io.Reader) (string, time.Duration, error) {
-	err := r.openDescriptor()
+	err := r.openDescriptor(nil)
 	if err != nil {
 		return "", 0, err
 	}

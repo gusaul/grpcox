@@ -88,15 +88,13 @@ func (h *Handler) getLists(w http.ResponseWriter, r *http.Request) {
 		metadataStr = fmt.Sprintf("%s:", m)
 	}
 
-	h.g.SetReflectHeaders(metadata...)
-
 	res, err := h.g.GetResource(context.Background(), host, !useTLS, restart)
 	if err != nil {
 		writeError(w, err)
 		return
 	}
 
-	result, err := res.List(service)
+	result, err := res.List(service, metadata)
 	if err != nil {
 		writeError(w, err)
 		return
@@ -155,7 +153,7 @@ func (h *Handler) getListsWithProto(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := res.List(service)
+	result, err := res.List(service, nil)
 	if err != nil {
 		writeError(w, err)
 		return

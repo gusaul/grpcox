@@ -131,8 +131,13 @@ $('#select-function').change(function(){
         method: "GET",
         success: function(res){
             if (res.error) {
-                alert(res.error);
-                return;
+                // on error generate empty editor. Fail of reflection should not interrupt request try.
+                console.log("Cant describe "+selected+" procedure: ", res.error)
+                res.data = {
+                    template: "",
+                    schema: ""
+                }
+
             }
 
             generate_editor(res.data.template);

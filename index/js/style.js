@@ -1,6 +1,6 @@
 var target, use_tls, editor;
 
-$('#get-services').click(function(){
+$('#get-services').click(function () {
 
     // reset all selected list
     resetReqResData()
@@ -10,16 +10,16 @@ $('#get-services').click(function(){
 
     use_tls = "false";
     var restart = "0"
-    if($('#restart-conn').is(":checked")) {
+    if ($('#restart-conn').is(":checked")) {
         restart = "1"
     }
-    if($('#use-tls').is(":checked")) {
+    if ($('#use-tls').is(":checked")) {
         use_tls = "true"
     }
 
     // use metadata if there is any
     ctxArr = [];
-    $(".ctx-metadata-input-field").each(function(index, val){
+    $(".ctx-metadata-input-field").each(function (index, val) {
         ctxArr.push($(val).text())
     });
 
@@ -35,10 +35,10 @@ $('#get-services').click(function(){
     // prepare ajax options beforehand
     // makes it easier for local proto to modify some of its properties
     const ajaxProps = {
-        url: "server/"+target+"/services?restart="+restart,
+        url: "server/" + target + "/services?restart=" + restart,
         global: true,
         method: "GET",
-        success: function(res){
+        success: function (res) {
             if (res.error) {
                 target = "";
                 use_tls = "";
@@ -49,21 +49,21 @@ $('#get-services').click(function(){
             $.each(res.data, (_, item) => $("#select-service").append(new Option(item, item)));
             $('#choose-service').show();
         },
-        error: function(_, _, errorThrown) {
+        error: function (_, _, errorThrown) {
             target = "";
             use_tls = "";
             alert(errorThrown);
         },
-        beforeSend: function(xhr){
+        beforeSend: function (xhr) {
             $('#choose-service').hide();
             xhr.setRequestHeader('use_tls', use_tls);
-            if(ctxUse) {
+            if (ctxUse) {
                 xhr.setRequestHeader('Metadata', ctxArr);
             }
             $(this).html("Loading...");
             show_loading();
         },
-        complete: function(){
+        complete: function () {
             applyConnCount();
             $(this).html(button);
             hide_loading();
@@ -85,51 +85,51 @@ $('#get-services').click(function(){
     $.ajax(ajaxProps);
 });
 
-$('#select-service').change(function(){
+$('#select-service').change(function () {
     var selected = $(this).val();
     if (selected == "") {
         return false;
     }
 
     $('#body-request').hide();
-    $('#response').hide();
+    $('#resp-tab').hide();
     $.ajax({
-        url: "server/"+target+"/service/"+selected+"/functions",
+        url: "server/" + target + "/service/" + selected + "/functions",
         global: true,
         method: "GET",
-        success: function(res){
+        success: function (res) {
             if (res.error) {
                 alert(res.error);
                 return;
             }
             $("#select-function").html(new Option("Choose Method", ""));
-            $.each(res.data, (_, item) => $("#select-function").append(new Option(item.substr(selected.length) , item)));
+            $.each(res.data, (_, item) => $("#select-function").append(new Option(item.substr(selected.length + 1), item)));
             $('#choose-function').show();
         },
         error: err,
-        beforeSend: function(xhr){
+        beforeSend: function (xhr) {
             $('#choose-function').hide();
             xhr.setRequestHeader('use_tls', use_tls);
             show_loading();
         },
-        complete: function(){
+        complete: function () {
             hide_loading();
         }
     });
 });
 
-$('#select-function').change(function(){
+$('#select-function').change(function () {
     var selected = $(this).val();
     if (selected == "") {
         return false;
     }
 
-    $('#response').hide();
+    $('#resp-tab').hide();
     $.ajax({
-        url: "server/"+target+"/function/"+selected+"/describe",
+        url: "server/" + target + "/function/" + selected + "/describe",
         global: true,
         method: "GET",
-        success: function(res){
+        success: function (res) {
             if (res.error) {
                 alert(res.error);
                 return;
@@ -140,22 +140,22 @@ $('#select-function').change(function(){
             $('#body-request').show();
         },
         error: err,
-        beforeSend: function(xhr){
+        beforeSend: function (xhr) {
             $('#body-request').hide();
             xhr.setRequestHeader('use_tls', use_tls);
             show_loading();
         },
-        complete: function(){
+        complete: function () {
             hide_loading();
         }
     });
 });
 
-$('#invoke-func').click(function(){
+$('#invoke-func').click(function () {
 
     // use metadata if there is any
     ctxArr = [];
-    $(".ctx-metadata-input-field").each(function(index, val){
+    $(".ctx-metadata-input-field").each(function (index, val) {
         ctxArr.push($(val).text())
     });
 
@@ -166,39 +166,58 @@ $('#invoke-func').click(function(){
     var body = editor.getValue();
     var button = $(this).html();
     $.ajax({
-        url: "server/"+target+"/function/"+func+"/invoke",
+        url: "server/" + target + "/function/" + func + "/invoke",
         global: true,
         method: "POST",
         data: body,
         dataType: "json",
-        success: function(res){
+        success: function (res) {
             if (res.error) {
                 alert(res.error);
                 return;
             }
             $("#json-response").html(PR.prettyPrintOne(res.data.result));
+            $("#json-resp-post").html(PR.prettyPrintOne(res.data.post_script_result));
             $("#timer-resp span").html(res.data.timer);
-            $('#response').show();
+            $('#resp-tab').show();
+            if (res.data.post_script_result == "") {
+                $('#post-script').hide();
+            } else {
+                $('#post-script').show();
+            }
+            $('#resp-original').show();
         },
         error: err,
-        beforeSend: function(xhr){
-            $('#response').hide();
+        beforeSend: function (xhr) {
+            $('#resp-tab').hide();
             xhr.setRequestHeader('use_tls', use_tls);
-            if(ctxUse) {
+            if (ctxUse) {
                 xhr.setRequestHeader('Metadata', ctxArr);
             }
             $(this).html("Loading...");
             show_loading();
         },
-        complete: function(){
+        complete: function () {
             $(this).html(button);
             hide_loading();
         }
     });
 });
 
+$("#resp-tab div button").click(function () {
+    const id = $(this).attr('id');
+    console.log(id);
+    if (!$(this).hasClass('active')) {
+        $("#resp-tab div button").removeClass('active');
+        $(this).addClass('active');
+
+        $('.tabcontent').hide();
+        $(`#resp-${id}`).show();
+    }
+});
+
 function generate_editor(content) {
-    if(editor) {
+    if (editor) {
         editor.setValue(content);
         return true;
     }
@@ -239,7 +258,7 @@ function hide_loading() {
     $('.spinner').hide();
 }
 
-$(".connections ul").on("click", "i", function(){
+$(".connections ul").on("click", "i", function () {
     $icon = $(this);
     $parent = $(this).parent("li");
     var ip = $(this).siblings("span").text();
@@ -248,15 +267,15 @@ $(".connections ul").on("click", "i", function(){
         url: "active/close/" + ip,
         global: true,
         method: "DELETE",
-        success: function(res){
+        success: function (res) {
             $('[data-toggle="tooltip"]').tooltip('hide');
-            if(res.data.success) {
+            if (res.data.success) {
                 $parent.remove();
                 updateCountNum();
             }
         },
         error: err,
-        beforeSend: function(xhr){
+        beforeSend: function (xhr) {
             $icon.attr('class', 'fa fa-spinner');
         },
     });
@@ -273,10 +292,10 @@ function applyConnCount() {
         url: "active/get",
         global: true,
         method: "GET",
-        success: function(res){
+        success: function (res) {
             $(".connections .title span").html(res.data.length);
             $(".connections .nav").html("");
-            res.data.forEach(function(item){
+            res.data.forEach(function (item) {
                 $list = $("#conn-list-template").clone();
                 $list.find(".ip").html(item);
                 $(".connections .nav").append($list.html());
@@ -301,6 +320,6 @@ function refreshToolTip() {
     })
 }
 
-$(document).ready(function(){
+$(document).ready(function () {
     refreshConnCount();
 });

@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -33,6 +34,9 @@ type Resource struct {
 	refClient  *grpcreflect.Client
 	protos     []Proto
 	protosets  []Proto
+
+	postScriptsSvc map[string]bool
+	postScriptsMtd map[string][]PostScriptConfig
 
 	headers []string
 	md      metadata.MD
@@ -112,9 +116,9 @@ func (r *Resource) List(symbol string) ([]string, error) {
 			return result, fmt.Errorf("No Services")
 		}
 
-		for _, svc := range svcs {
-			result = append(result, fmt.Sprintf("%s\n", svc))
-		}
+		result = append(result, svcs...)
+
+		r.loadPostScriptsServices()
 	} else {
 		methods, err := grpcurl.ListMethods(r.descSource, symbol)
 		if err != nil {
@@ -124,12 +128,45 @@ func (r *Resource) List(symbol string) ([]string, error) {
 			return result, fmt.Errorf("No Function") // probably unlikely
 		}
 
-		for _, m := range methods {
-			result = append(result, fmt.Sprintf("%s\n", m))
-		}
+		result = append(result, methods...)
+
+		r.loadPostScriptsMethods(symbol)
 	}
 
 	return result, nil
+}
+
+func (r *Resource) loadPostScriptsServices() {
+	pwd, _ := os.Getwd()
+	dir, _ := os.ReadDir(pwd + "/core/post-scripts")
+	r.postScriptsSvc = make(map[string]bool)
+	for _, v := range dir {
+		r.postScriptsSvc[v.Name()] = true
+	}
+}
+
+func (r *Resource) loadPostScriptsMethods(symbol string) {
+	if ok := r.postScriptsSvc[symbol]; !ok {
+		return
+	}
+	pwd, _ := os.Getwd()
+	dirName := pwd + "/core/post-scripts/" + symbol
+	dir, _ := os.ReadDir(dirName)
+
+	r.postScriptsMtd = make(map[string][]PostScriptConfig)
+
+	for _, v := range dir {
+		mtd := symbol + "." + v.Name()
+
+		f, _ := os.Open(dirName + "/" + v.Name())
+
+		defer f.Close()
+
+		cfgs := []PostScriptConfig{}
+		if err := json.NewDecoder(f).Decode(&cfgs); err == nil {
+			r.postScriptsMtd[mtd] = cfgs
+		}
+	}
 }
 
 // Describe - The "describe" verb will print the type of any symbol that the server knows about
@@ -217,7 +254,7 @@ func (r *Resource) Invoke(ctx context.Context, metadata []string, symbol string,
 
 	start := time.Now()
 	err = grpcurl.InvokeRPC(ctx, r.descSource, r.clientConn, symbol, headers, h, rf.Next)
-	end := time.Now().Sub(start) / time.Millisecond
+	end := time.Since(start)
 	if err != nil {
 		return "", end, err
 	}
@@ -227,6 +264,23 @@ func (r *Resource) Invoke(ctx context.Context, metadata []string, symbol string,
 	}
 
 	return resultBuffer.String(), end, nil
+}
+
+func (r *Resource) PostScript(ctx context.Context, symbol, resp string) string {
+	cfgs, ok := r.postScriptsMtd[symbol]
+	if !ok {
+		return ""
+	}
+
+	var res string = resp
+	for _, cfg := range cfgs {
+		switch cfg.Func {
+		case FuncNameStringToJson:
+			res = FuncStringToJson(res, cfg.Src, cfg.Dst)
+		}
+	}
+
+	return res
 }
 
 // Close - to close all resources that was opened before

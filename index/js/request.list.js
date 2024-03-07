@@ -65,7 +65,7 @@ function setReqResData(data) {
     $('#body-request').show();
     $('#schema-proto').html(data.schema_proto_html);
     $('#json-response').html(data.response_html);
-    $('#response').show();
+    $('#resp-tab').show();
 }
 
 function resetReqResData() {
@@ -73,7 +73,7 @@ function resetReqResData() {
     $('#choose-service').hide();
     $('#choose-function').hide();
     $('#body-request').hide();
-    $('#response').hide();
+    $('#resp-tab').hide();
 }
 
 async function renderRequestList() {

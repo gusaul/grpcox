@@ -1,55 +1,72 @@
 body {
     padding-bottom: 50px;
 }
+
 .mt-10 {
-    margin-top:10px;
+    margin-top: 10px;
 }
+
 .pt-50 {
-    padding-top:50px;
+    padding-top: 50px;
 }
+
 .w-120 {
     width: 120px;
 }
+
 .custom-pretty {
-    border:none!important;
+    border: none !important;
 }
+
 .custom-control-label:hover {
     cursor: pointer;
 }
-#choose-service, #choose-function, #body-request {
+
+#choose-service,
+#choose-function,
+#body-request {
     margin-top: 40px;
 }
+
 .schema-body {
     height: 250px;
     overflow-y: scroll;
 }
-#response {
+
+#resp-tab {
     margin-top: 30px;
 }
 
 /* github corner */
-.github-corner:hover .octo-arm{
-    animation:octocat-wave 560ms ease-in-out
+.github-corner:hover .octo-arm {
+    animation: octocat-wave 560ms ease-in-out
 }
-@keyframes octocat-wave{
-    0%,100%{
-        transform:rotate(0)
+
+@keyframes octocat-wave {
+
+    0%,
+    100% {
+        transform: rotate(0)
     }
-    20%,60%{
-        transform:rotate(-25deg)
+
+    20%,
+    60% {
+        transform: rotate(-25deg)
     }
-    40%,80%{
-        transform:rotate(10deg)
+
+    40%,
+    80% {
+        transform: rotate(10deg)
     }
 }
 
-@media (max-width:500px){
-    .github-corner:hover .octo-arm{
-        animation:none
+@media (max-width:500px) {
+    .github-corner:hover .octo-arm {
+        animation: none
     }
 
-    .github-corner .octo-arm{
-        animation:octocat-wave 560ms ease-in-out
+    .github-corner .octo-arm {
+        animation: octocat-wave 560ms ease-in-out
     }
 }
 
@@ -62,15 +79,16 @@ body {
     position: fixed;
     top: 200px;
     z-index: 100;
-    -webkit-box-shadow: -3px 0px 5px 0px rgba(0,0,0,0.2);
-    box-shadow: -3px 0px 5px 0px rgba(0,0,0,0.2);
+    -webkit-box-shadow: -3px 0px 5px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: -3px 0px 5px 0px rgba(0, 0, 0, 0.2);
     left: -190px;
     transition: all .3s;
     -webkit-transition: all .3s;
     color: #222;
 }
 
-.connections:hover, .connections:focus {
+.connections:hover,
+.connections:focus {
     transform: translate3d(190px, 0, 0);
     animation-timing-function: 1s ease-in
 }
@@ -110,7 +128,9 @@ body {
     cursor: pointer;
 }
 
-.connections .nav li a:hover { color: #aaa }
+.connections .nav li a:hover {
+    color: #aaa
+}
 
 .dots {
     position: absolute;
@@ -141,6 +161,7 @@ circle {
         stroke-opacity: 1;
         transform: scale(0.3);
     }
+
     to {
         stroke-width: 0;
         stroke-opacity: 0;
@@ -157,7 +178,7 @@ circle {
     font-size: 80px;
 }
 
-.spinner > div {
+.spinner>div {
     background-color: #59698d;
     height: 100%;
     width: 18px;
@@ -188,15 +209,28 @@ circle {
 }
 
 @-webkit-keyframes sk-stretchdelay {
-    0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
-    20% { -webkit-transform: scaleY(1.0) }
+
+    0%,
+    40%,
+    100% {
+        -webkit-transform: scaleY(0.4)
+    }
+
+    20% {
+        -webkit-transform: scaleY(1.0)
+    }
 }
 
 @keyframes sk-stretchdelay {
-    0%, 40%, 100% {
+
+    0%,
+    40%,
+    100% {
         transform: scaleY(0.4);
         -webkit-transform: scaleY(0.4);
-    }  20% {
+    }
+
+    20% {
         transform: scaleY(1.0);
         -webkit-transform: scaleY(1.0);
     }
@@ -215,13 +249,14 @@ circle {
     margin-bottom: 0;
     margin-left: 5px;
     max-width: 100%;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
 .one-long-line:hover {
     cursor: pointer;
-    overflow:visible;
+    overflow: visible;
 }
 
 .column-row-left {
@@ -230,7 +265,7 @@ circle {
     margin-top: 8px;
 }
 
-.column-row-left .md-form{
+.column-row-left .md-form {
     margin-bottom: 0;
 }
 
@@ -248,5 +283,65 @@ circle {
 }
 
 .request-list.selected {
-    background: #dadfe3;;
+    background: #dadfe3;
+    ;
+}
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    /* border: 1px solid #ccc; */
+    /* background-color: #f1f1f1; */
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+
+/* Style the tab content */
+.tabcontent {
+    /* display: none; */
+    padding: 6px 12px;
+    -webkit-animation: fadeEffect 1s;
+    animation: fadeEffect 1s;
+}
+
+/* Fade in tabs */
+@-webkit-keyframes fadeEffect {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeEffect {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }

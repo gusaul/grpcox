@@ -266,14 +266,20 @@ func (h *Handler) invokeFunction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	postScriptResult := res.PostScript(context.Background(), funcName, result)
+
 	type invRes struct {
 		Time   string `json:"timer"`
 		Result string `json:"result"`
+
+		PostScriptsResult string `json:"post_script_result"`
 	}
 
 	h.g.Extend(host)
 	response(w, invRes{
 		Time:   timer.String(),
 		Result: result,
+
+		PostScriptsResult: postScriptResult,
 	})
 }
